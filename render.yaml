@@ -1,0 +1,18 @@
+# Render manifest for backend service (fill placeholders before applying)
+services:
+  - type: web
+    name: trecker-backend
+    env: docker
+    repo: https://github.com/<your-username>/<your-repo>
+    branch: main
+    dockerfilePath: backend/Dockerfile
+    plan: free
+    envVars:
+      - key: DATABASE_URL
+        value: ${DATABASE_URL}
+      - key: JWT_SECRET
+        value: ${JWT_SECRET}
+      - key: ALLOW_ORIGINS
+        value: ${ALLOW_ORIGINS}
+      - key: ACCESS_TOKEN_EXPIRE_MINUTES
+        value: ${ACCESS_TOKEN_EXPIRE_MINUTES}
