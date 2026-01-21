@@ -13,4 +13,6 @@ ENV PYTHONPATH=/app
 
 # Let Render provide $PORT at runtime
 EXPOSE 8080
-CMD ["bash", "-lc", "export PYTHONPATH=/app && uvicorn backend.app:app --host 0.0.0.0 --port $PORT"]
+COPY start.sh /app/start.sh
+RUN chmod +x /app/start.sh
+CMD ["/app/start.sh"]
