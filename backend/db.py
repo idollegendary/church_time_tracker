@@ -5,7 +5,7 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
-DATABASE_URL = os.getenv('DATABASE_URL', 'sqlite+aiosqlite:///./dev.db')
+DATABASE_URL = os.getenv('DATABASE_URL', 'postgresql://timedb_dfex_user:Y3jSsoU8DMnhsoT3SZpbjHoFJNmxQQYO@dpg-d5o1b375r7bs73cj1d60-a/timedb_dfex')
 
 engine = create_async_engine(DATABASE_URL, echo=False, future=True)
 

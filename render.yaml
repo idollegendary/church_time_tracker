@@ -1,12 +1,13 @@
-# Render manifest for backend service (fill placeholders before applying)
+# Render manifest for backend service
 services:
   - type: web
     name: trecker-backend
     env: docker
-    repo: https://github.com/<your-username>/<your-repo>
+    repo: https://github.com/idollegendary/church_time_tracker.git
     branch: main
     dockerfilePath: backend/Dockerfile
     plan: free
+    startCommand: bash -lc "python backend/reset_db.py && uvicorn backend.app:app --host 0.0.0.0 --port $PORT"
     envVars:
       - key: DATABASE_URL
         value: ${DATABASE_URL}
