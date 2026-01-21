@@ -4,7 +4,6 @@ from typing import List, Optional
 from datetime import datetime, timezone
 import os
 from datetime import timedelta
-import logging
 
 from jose import JWTError, jwt
 from passlib.context import CryptContext
@@ -12,18 +11,13 @@ from passlib.context import CryptContext
 from backend.db import init_db, get_session
 from backend.models import Session as SessionModel, SessionBase, Church, Preacher, User
 from pydantic import BaseModel
+import os
 from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlmodel import select
 from sqlalchemy import func, text
 
 # Auth config (env overrides)
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger('trecker.backend')
-
-SECRET_KEY = os.getenv('JWT_SECRET')
-if not SECRET_KEY:
-    raise RuntimeError('JWT_SECRET environment variable is required. Copy backend/.env.example to backend/.env and set a secure value')
-
+SECRET_KEY = os.getenv('JWT_SECRET', 'dev-secret')
 ALGORITHM = 'HS256'
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv('ACCESS_TOKEN_EXPIRE_MINUTES', '60'))
 
@@ -91,17 +85,10 @@ def require_admin(user: User = Depends(get_current_user)):
 
 app = FastAPI(title="Trecker Time - backend (dev)")
 
-# Configure CORS from environment - prefer explicit origins rather than '*'
-origins_env = os.getenv('ALLOW_ORIGINS')
-if origins_env:
-    allow_origins = [o.strip() for o in origins_env.split(',') if o.strip()]
-else:
-    # sensible dev defaults
-    allow_origins = ['http://127.0.0.1:5173', 'http://localhost:5173']
-
+# Development CORS: allow frontend dev servers to call the API.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=allow_origins,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -295,8 +282,8 @@ async def analytics_overlap(limit: int = 50, church_id: Optional[str] = None, db
         rows = res.fetchall()
         return [{'session_a': r[0], 'session_b': r[1], 'overlap_sec': int(r[2] or 0)} for r in rows]
     except Exception as e:
-        logger.exception('analytics_overlap query failed')
-        raise HTTPException(status_code=500, detail='Internal server error')
+        # return error detail for dev debugging
+        return {'error': str(e)}
 
 
 @app.get("/api/churches", response_model=List[Church])
