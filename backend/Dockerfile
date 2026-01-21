@@ -1,12 +1,12 @@
 FROM python:3.11-slim
 WORKDIR /app
 
-# Copy only what's needed from the repo to avoid context path issues
-COPY backend/requirements.txt /app/requirements.txt
+# Copy requirements from build context (backend/ as context root on Render)
+COPY requirements.txt /app/requirements.txt
 RUN python -m pip install --upgrade pip && pip install --no-cache-dir -r /app/requirements.txt
 
-# Copy backend sources into /app/backend
-COPY backend /app/backend
+# Copy entire build context into /app
+COPY . /app
 
 # Ensure Python can import the `backend` package
 ENV PYTHONPATH=/app
