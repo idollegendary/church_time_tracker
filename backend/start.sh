@@ -1,5 +1,6 @@
 
 #!/bin/sh
+#!/bin/sh
 set -eu
 
 # start.sh - entrypoint for container platforms (Render/GCP/etc)
@@ -34,6 +35,7 @@ if [ "${ALEMBIC_AUTO_MIGRATE:-0}" = "1" ] || [ "${ALEMBIC_AUTO_MIGRATE:-}" = "tr
 		echo "alembic.ini not found, skipping migrations"
 	fi
 fi
+
 # Run any simple apply_migrations script if present (non-destructive small SQL patches)
 if [ "${APPLY_MIGRATIONS:-0}" = "1" ] || [ "${APPLY_MIGRATIONS:-}" = "true" ]; then
 	if [ -f /app/apply_migrations.py ]; then
