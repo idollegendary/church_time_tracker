@@ -1,5 +1,5 @@
 
-#!/usr/bin/env sh
+#!/bin/sh
 set -eu
 
 # start.sh - entrypoint for container platforms (Render/GCP/etc)
@@ -18,10 +18,10 @@ if [ -d /app/backend ]; then
 elif [ -f /app/app.py ]; then
 	MODULE="app"
 else
-	echo "Could not find application module (neither /app/backend nor /app/app.py present)" >&2
+	echo "Could not find application module (neither /app/backend nor /app/app.py present)" 1>&2
 	exit 1
 fi
 
 echo "Starting uvicorn on ${HOST}:${PORT} (module=${MODULE})"
 
-exec uvicorn ${MODULE}:app --host "$HOST" --port "$PORT" --proxy-headers
+exec uvicorn ${MODULE}:app --host "${HOST}" --port "${PORT}" --proxy-headers
