@@ -7,7 +7,7 @@ services:
     branch: main
     dockerfilePath: backend/Dockerfile
     plan: free
-    startCommand: bash -lc "export PYTHONPATH=/app && python backend/reset_db.py && export PYTHONPATH=/app && uvicorn backend.app:app --host 0.0.0.0 --port $PORT"
+    startCommand: bash -lc "export PYTHONPATH=/app && python /app/backend/reset_db.py && /app/start.sh"
     envVars:
       - key: DATABASE_URL
         # Converted to asyncpg scheme for SQLModel async engine
