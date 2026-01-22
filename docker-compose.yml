@@ -13,13 +13,15 @@ services:
 
   backend-express:
     build: ./backend-express
-    command: npm start --prefix ./backend-express
+    command: npm start
     ports:
       - "8000:8000"
     volumes:
       - ./backend-express:/app
     env_file:
       - backend-express/.env
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/trecker_time
     depends_on:
       - db
 

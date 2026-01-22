@@ -1,0 +1,19 @@
+Trecker Time Express backend listening on port 8000
+/Users/kopis/Documents/web/trecker-time/backend-express/node_modules/pg-pool/index.js:45
+    Error.captureStackTrace(err)
+          ^
+
+Error: connect ETIMEDOUT 172.19.0.2:5432
+    at /Users/kopis/Documents/web/trecker-time/backend-express/node_modules/pg-pool/index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async query (/Users/kopis/Documents/web/trecker-time/backend-express/src/db/index.js:15:15)
+    at async getUserByLogin (/Users/kopis/Documents/web/trecker-time/backend-express/src/models/user.js:10:15)
+    at async /Users/kopis/Documents/web/trecker-time/backend-express/src/routes/auth.js:15:20 {
+  errno: -60,
+  code: 'ETIMEDOUT',
+  syscall: 'connect',
+  address: '172.19.0.2',
+  port: 5432
+}
+
+Node.js v24.9.0

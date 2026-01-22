@@ -1,0 +1,19 @@
+Trecker Time Express backend listening on port 8000
+/Users/kopis/Documents/web/trecker-time/backend-express/node_modules/pg-pool/index.js:45
+    Error.captureStackTrace(err)
+          ^
+
+Error: connect ECONNREFUSED 127.0.0.1:5433
+    at /Users/kopis/Documents/web/trecker-time/backend-express/node_modules/pg-pool/index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async query (/Users/kopis/Documents/web/trecker-time/backend-express/src/db/index.js:15:15)
+    at async listPreachers (/Users/kopis/Documents/web/trecker-time/backend-express/src/models/preacher.js:14:15)
+    at async /Users/kopis/Documents/web/trecker-time/backend-express/src/routes/preachers.js:18:17 {
+  errno: -61,
+  code: 'ECONNREFUSED',
+  syscall: 'connect',
+  address: '127.0.0.1',
+  port: 5433
+}
+
+Node.js v24.9.0
