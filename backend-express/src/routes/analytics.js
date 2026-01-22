@@ -1,9 +1,10 @@
 const express = require('express');
 const { query } = require('../db');
+const asyncHandler = require('../utils/asyncHandler');
 
 const router = express.Router();
 
-router.get('/summary', async (req, res) => {
+router.get('/summary', asyncHandler(async (req, res) => {
   const { from_, to, church_id } = req.query;
   const clauses = [];
   const params = [];
@@ -17,9 +18,9 @@ router.get('/summary', async (req, res) => {
   const resq = await query(sql, params);
   const rows = resq.rows.map(r => ({ preacher_id: r.preacher_id, total_sec: Number(r.total_sec || 0), sessions_count: Number(r.sessions_count || 0) }));
   res.json(rows);
-});
+}));
 
-router.get('/time-series', async (req, res) => {
+router.get('/time-series', asyncHandler(async (req, res) => {
   const { preacher_id, from_, to, church_id, granularity = 'day' } = req.query;
   if (granularity !== 'day') return res.status(400).json({ error: 'only day granularity supported' });
   const clauses = [];
@@ -35,9 +36,9 @@ router.get('/time-series', async (req, res) => {
   const resq = await query(sql, params);
   const rows = resq.rows.filter(r => r.day !== null).map(r => ({ day: r.day, total_sec: Number(r.total_sec || 0) }));
   res.json(rows);
-});
+}));
 
-router.get('/top', async (req, res) => {
+router.get('/top', asyncHandler(async (req, res) => {
   const { limit = 10, from_, to, church_id } = req.query;
   const clauses = [];
   const params = [];
@@ -52,9 +53,9 @@ router.get('/top', async (req, res) => {
   const resq = await query(sql, params);
   const rows = resq.rows.map(r => ({ preacher_id: r.preacher_id, total_sec: Number(r.total_sec || 0), sessions_count: Number(r.sessions_count || 0) }));
   res.json(rows);
-});
+}));
 
-router.get('/shortest', async (req, res) => {
+router.get('/shortest', asyncHandler(async (req, res) => {
   const { limit = 10, church_id } = req.query;
   const params = [limit];
   let sql = `SELECT id, preacher_id, duration_sec, start_at, end_at FROM sessions WHERE duration_sec IS NOT NULL`;
@@ -64,9 +65,9 @@ router.get('/shortest', async (req, res) => {
   const resq = await query(sql, params);
   const rows = resq.rows.map(r => ({ id: r.id, preacher_id: r.preacher_id, duration_sec: r.duration_sec, start_at: r.start_at ? r.start_at.toISOString() : null, end_at: r.end_at ? r.end_at.toISOString() : null }));
   res.json(rows);
-});
+}));
 
-router.get('/overlap', async (req, res) => {
+router.get('/overlap', asyncHandler(async (req, res) => {
   const { limit = 50, church_id } = req.query;
   let where_clause = '';
   if (church_id) { where_clause = `AND s1.church_id = $1 AND s2.church_id = $1`; }
@@ -84,13 +85,9 @@ router.get('/overlap', async (req, res) => {
   const params = [];
   if (church_id) params.push(church_id);
   params.push(limit);
-  try {
-    const resq = await query(sql, params);
-    const rows = resq.rows.map(r => ({ session_a: r.session_a, session_b: r.session_b, overlap_sec: Number(r.overlap_sec || 0) }));
-    res.json(rows);
-  } catch (e) {
-    res.json({ error: String(e) });
-  }
-});
+  const resq = await query(sql, params);
+  const rows = resq.rows.map(r => ({ session_a: r.session_a, session_b: r.session_b, overlap_sec: Number(r.overlap_sec || 0) }));
+  res.json(rows);
+}));
 
 module.exports = router;
