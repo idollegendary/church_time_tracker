@@ -23,7 +23,17 @@ app.use('/api/churches', churchesRoutes);
 app.use('/api/analytics', analyticsRoutes);
 
 app.use((err, req, res, next) => {
-  console.error(err);
+  try {
+    console.error('Error handling request', {
+      method: req.method,
+      path: req.originalUrl,
+      body: req.body,
+      message: err && err.message,
+      stack: err && err.stack,
+    });
+  } catch (e) {
+    console.error('Error logging failed', e);
+  }
   res.status(err.status || 500).json({ error: err.message || 'internal error' });
 });
 
