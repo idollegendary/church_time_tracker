@@ -108,7 +108,11 @@ export default function Timer(){
       return
     }
     let id = sessionId
-    if(!id) id = await createSession()
+    // if previous session ended, start a fresh one
+    if(!id || (created && created.end_at)){
+      id = await createSession()
+      setSessionId(id)
+    }
     try{
       await axios.post(`/api/sessions/${id}/start`)
       // fetch updated session to get start_at
@@ -131,6 +135,10 @@ export default function Timer(){
       setRunning(false)
       // clear persisted timer
       clearTimerState()
+      // reset so next start creates a new session cleanly
+      setSessionId(null)
+      setCreated(null)
+      setElapsed(0)
     }catch(e){console.error(e)}
   }
 
