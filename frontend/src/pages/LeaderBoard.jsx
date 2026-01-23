@@ -4,6 +4,7 @@ import { formatDuration } from '../utils/format'
 import Button from '../components/Button'
 import Card from '../components/Card'
 import Avatar from '../components/Avatar'
+import BadgeModal from '../components/BadgeModal'
 
 export default function LeaderBoard(){
   const [preachers, setPreachers] = useState([])
@@ -15,6 +16,7 @@ export default function LeaderBoard(){
   const [expandedId, setExpandedId] = useState(null)
   const [badges, setBadges] = useState([])
   const [assignments, setAssignments] = useState({})
+  const [showBadgeModal, setShowBadgeModal] = useState(false)
   const [newBadgeLabel, setNewBadgeLabel] = useState('')
   const [newBadgeEmoji, setNewBadgeEmoji] = useState('🏅')
   const [newBadgeColor, setNewBadgeColor] = useState('text-yellow-600')
@@ -210,11 +212,12 @@ export default function LeaderBoard(){
             </select>
             <Button size="sm" variant="primary" onClick={createBadge}>Create Badge</Button>
           </div>
-          <div className="ml-auto flex gap-2 flex-wrap">
+          <div className="ml-auto flex gap-2 flex-wrap items-center">
+            <Button size="sm" variant="secondary" onClick={(e)=>{ e.stopPropagation(); setShowBadgeModal(true) }}>Manage Badges</Button>
             {(badges||[]).map(b => (
               <div key={b.id} className="flex items-center gap-2">
                 <div className={`badge-pill ${b.id ? 'badge-pop' : ''} ${b.color}`}><span className="badge-emoji">{b.emoji}</span> {b.label}</div>
-                <button className="text-xs text-muted ml-1" onClick={()=>deleteBadge(b.id)}>×</button>
+                <button className="text-xs text-muted ml-1" onClick={(e)=>{ e.stopPropagation(); deleteBadge(b.id) }}>×</button>
               </div>
             ))}
           </div>
@@ -322,6 +325,7 @@ export default function LeaderBoard(){
           })
         )}
       </div>
+        <BadgeModal open={showBadgeModal} badges={badges} onClose={()=>setShowBadgeModal(false)} onChange={persistBadges} onDelete={deleteBadge} />
     </div>
   )
 }
