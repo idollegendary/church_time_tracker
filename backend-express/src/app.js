@@ -23,6 +23,50 @@ try {
   console.warn('Swagger UI not available:', e && e.message);
 }
 
+// Fallback docs: serve spec JSON and an HTML page using CDN-hosted Swagger UI.
+const fs = require('fs');
+const path = require('path');
+app.get('/api/docs/spec', (req, res) => {
+  const p = path.join(__dirname, 'docs', 'openapi.json');
+  if (fs.existsSync(p)) {
+    try {
+      const spec = fs.readFileSync(p, 'utf8');
+      res.type('application/json').send(spec);
+      return;
+    } catch (err) {
+      console.warn('Failed to read openapi.json:', err && err.message);
+    }
+  }
+  res.status(404).json({ error: 'OpenAPI spec not found' });
+});
+
+app.get('/api/docs', (req, res) => {
+  // Minimal HTML that loads Swagger UI from CDN and points to /api/docs/spec
+  const html = `<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>API Docs</title>
+    <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@4/swagger-ui.css" />
+  </head>
+  <body>
+    <div id="swagger-ui"></div>
+    <script src="https://unpkg.com/swagger-ui-dist@4/swagger-ui-bundle.js"></script>
+    <script>
+      window.onload = function() {
+        SwaggerUIBundle({
+          url: '/api/docs/spec',
+          dom_id: '#swagger-ui',
+          presets: [SwaggerUIBundle.presets.apis],
+          layout: 'BaseLayout'
+        });
+      };
+    </script>
+  </body>
+</html>`;
+  res.type('text/html').send(html);
+});
+
 app.get('/health', (req, res) => res.json({ status: 'ok' }));
 
 app.use('/api/auth', authRoutes);
