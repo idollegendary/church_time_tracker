@@ -27,18 +27,11 @@ app.use((req, res, next) => {
   next();
 });
 
-// Serve API documentation (Swagger UI)
-try {
-  const swaggerUi = require('swagger-ui-express');
-  const openapiSpec = require('./docs/openapi.json');
-  app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(openapiSpec));
-} catch (e) {
-  console.warn('Swagger UI not available:', e && e.message);
-}
-
 // Fallback docs: serve spec JSON and an HTML page using CDN-hosted Swagger UI.
 const fs = require('fs');
 const path = require('path');
+
+// Serve spec before any Swagger middleware to ensure JSON is returned.
 app.get('/api/docs/spec', (req, res) => {
   const p = path.join(__dirname, 'docs', 'openapi.json');
   if (fs.existsSync(p)) {
