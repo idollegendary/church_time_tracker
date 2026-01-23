@@ -19,16 +19,32 @@ export default function Manage(){
 
   const [confirmOpen, setConfirmOpen] = useState(false)
   const [toDeleteId, setToDeleteId] = useState(null)
+  useEffect(()=>{ fetchChurches(); fetchPreachers(); fetchSessions() }, [])
 
-  useEffect(()=>{ fetchChurches(); fetchPreachers() }, [])
+  const [sessions, setSessions] = useState([])
 
   async function fetchChurches(){
-    try{ const res = await axios.get('/api/churches'); setChurches(res.data); const map={}; res.data.forEach(c=>map[c.id]=c); setChurchMap(map) }catch(e){console.error(e)}
-  const [sessions, setSessions] = useState([])
+    try{
+      const res = await axios.get('/api/churches')
+      setChurches(res.data)
+      const map = {}
+      res.data.forEach(c=> map[c.id]=c)
+      setChurchMap(map)
+    }catch(e){ console.error(e) }
   }
 
-  useEffect(()=>{ fetchChurches(); fetchPreachers(); fetchSessions() }, [])
-    try{ const res = await axios.get('/api/preachers'); setPreachers(res.data) }catch(e){console.error(e)}
+  async function fetchPreachers(){
+    try{
+      const res = await axios.get('/api/preachers')
+      setPreachers(res.data)
+    }catch(e){ console.error(e) }
+  }
+
+  async function fetchSessions(){
+    try{
+      const res = await axios.get('/api/sessions')
+      setSessions(res.data)
+    }catch(e){ console.error(e) }
   }
 
   function openEdit(type, entity=null){ setEditType(type); setEditEntity(entity || {}); setEditOpen(true) }
