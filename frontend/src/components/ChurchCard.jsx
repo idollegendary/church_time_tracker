@@ -3,7 +3,7 @@ import Card from './Card'
 import Avatar from './Avatar'
 import Button from './Button'
 
-export default function ChurchCard({ church, preachers = [], sessions = [], onEdit = ()=>{}, onDelete = ()=>{} }){
+export default function ChurchCard({ church, preachers = [], sessions = [], onEdit = ()=>{}, onDelete = ()=>{}, onOpen = ()=>{} }){
   // choose up to 4 random preachers to display (shuffle on prop change)
   const shown = useMemo(() => {
     if(!preachers || preachers.length === 0) return []
@@ -27,7 +27,7 @@ export default function ChurchCard({ church, preachers = [], sessions = [], onEd
 
   return (
     <Card className="overflow-hidden card-hero">
-      <div className="p-4 flex items-start gap-4">
+      <div className="p-4 flex items-start gap-4 cursor-pointer" onClick={()=>onOpen(church)}>
         <div className="flex-shrink-0">
           <div className="w-16 h-16 rounded-lg flex items-center justify-center bg-gradient-to-br from-primary/80 to-primary/40 text-white text-lg font-semibold">{(church.name||'').split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase()}</div>
         </div>
@@ -41,12 +41,12 @@ export default function ChurchCard({ church, preachers = [], sessions = [], onEd
           </div>
 
           <div className="mt-3 flex items-center gap-2">
-            <div className="avatar-stack">
+            <div className="avatar-stack max-w-[9rem] overflow-hidden pr-2">
               {shown.map(p => <Avatar key={p.id} src={p.avatar_url} name={p.name} id={p.id} size={40} className="-ml-3" />)}
             </div>
-            <div className="ml-auto flex gap-2">
-              <Button variant="secondary" size="sm" onClick={()=>onEdit('church', church)}>Edit</Button>
-              <Button variant="danger" size="sm" onClick={()=>onDelete(church.id)}>Delete</Button>
+            <div className="ml-auto flex gap-2 flex-shrink-0">
+              <Button variant="secondary" size="sm" onClick={(e)=>{ e.stopPropagation(); onEdit('church', church) }}>Edit</Button>
+              <Button variant="danger" size="sm" onClick={(e)=>{ e.stopPropagation(); onDelete(church.id) }}>Delete</Button>
             </div>
           </div>
         </div>

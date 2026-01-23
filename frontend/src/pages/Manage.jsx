@@ -8,6 +8,7 @@ import Card from '../components/Card'
 import ConfirmModal from '../components/ConfirmModal'
 import ChurchCard from '../components/ChurchCard'
 import PreacherCard from '../components/PreacherCard'
+import ChurchPreachersModal from '../components/ChurchPreachersModal'
 
 export default function Manage(){
   const [active, setActive] = useState('churches')
@@ -18,6 +19,11 @@ export default function Manage(){
   const [editOpen, setEditOpen] = useState(false)
   const [editEntity, setEditEntity] = useState(null)
   const [editType, setEditType] = useState(null)
+
+  const [preacherChurchFilter, setPreacherChurchFilter] = useState('')
+
+  const [churchModalOpen, setChurchModalOpen] = useState(false)
+  const [churchModalChurch, setChurchModalChurch] = useState(null)
 
   const [confirmOpen, setConfirmOpen] = useState(false)
   const [toDeleteId, setToDeleteId] = useState(null)
@@ -74,6 +80,11 @@ export default function Manage(){
     }catch(e){ console.error(e); alert('Delete failed') }
   }
 
+  function openChurchModal(church){
+    setChurchModalChurch(church)
+    setChurchModalOpen(true)
+  }
+
   async function handleSave(payload){
     try{
       if(editType === 'church'){
@@ -90,8 +101,9 @@ export default function Manage(){
     }catch(e){ console.error(e); alert('Save failed') }
   }
 
-  const churchCols = [ { key: 'name', title: 'Name' } ]
-  const preacherCols = [ { key: 'name', title: 'Name', render: r => r.name }, { key: 'church', title: 'Church', render: r => (churchMap[r.church_id]?.name || '-') } ]
+  const filteredPreachers = preacherChurchFilter
+    ? preachers.filter(p => String(p.church_id) === String(preacherChurchFilter))
+    : preachers
 
   return (
     <AdminLayout title="Manage">
@@ -104,6 +116,16 @@ export default function Manage(){
           <Button variant="primary" onClick={()=>openEdit(active==='churches' ? 'church' : 'preacher')}>New {active==='churches' ? 'Church' : 'Preacher'}</Button>
         </div>
       </div>
+
+      {active === 'preachers' ? (
+        <div className="mb-4 flex items-center gap-2">
+          <label className="text-sm text-muted">Church filter:</label>
+          <select className="border rounded px-2 py-1" value={preacherChurchFilter} onChange={(e)=>setPreacherChurchFilter(e.target.value)}>
+            <option value="">All</option>
+            {churches.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+          </select>
+        </div>
+      ) : null}
 
       {/* Tables removed: cards-only admin UI below */}
 
@@ -128,17 +150,25 @@ export default function Manage(){
           {churches.map(c => {
             const preachersFor = preachers.filter(p=>p.church_id === c.id)
             const sess = sessions.filter(s => s.church_id === c.id)
-            return <ChurchCard key={c.id} church={c} preachers={preachersFor} sessions={sess} onEdit={openEdit} onDelete={requestDelete} />
+            return <ChurchCard key={c.id} church={c} preachers={preachersFor} sessions={sess} onEdit={openEdit} onDelete={requestDelete} onOpen={openChurchModal} />
           })}
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
-          {preachers.map(p => {
+          {filteredPreachers.map(p => {
             const sess = sessions.filter(s => s.preacher_id === p.id)
             return <PreacherCard key={p.id} preacher={p} churchName={churchMap[p.church_id]?.name} sessions={sess} onEdit={openEdit} onDelete={requestDelete} />
           })}
         </div>
       )}
+
+      <ChurchPreachersModal
+        open={churchModalOpen}
+        church={churchModalChurch}
+        preachers={churchModalChurch ? preachers.filter(p=>p.church_id === churchModalChurch.id) : []}
+        sessions={churchModalChurch ? sessions.filter(s=>s.church_id === churchModalChurch.id) : []}
+        onClose={()=>{ setChurchModalOpen(false); setChurchModalChurch(null) }}
+      />
 
     </AdminLayout>
   )
