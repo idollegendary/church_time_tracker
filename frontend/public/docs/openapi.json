@@ -1,0 +1,79 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Trecker Time API",
+    "version": "0.1.0",
+    "description": "OpenAPI spec for Trecker Time backend"
+  },
+  "servers": [
+    { "url": "https://backend-express-lx7b5he8y-idollegendarys-projects.vercel.app" }
+  ],
+  "paths": {
+    "/api/auth/register": {
+      "post": {
+        "summary": "Register user",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/RegisterRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "User created" },
+          "400": { "description": "Bad request" },
+          "503": { "description": "DB unavailable" }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "summary": "Login user",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/LoginRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Auth success" },
+          "401": { "description": "Invalid credentials" }
+        }
+      }
+    },
+    "/api/auth/me": {
+      "get": {
+        "summary": "Get current user",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "User info" },
+          "401": { "description": "Unauthorized" }
+        }
+      }
+    },
+    "/api/sessions": {
+      "get": { "summary": "List sessions", "responses": { "200": { "description": "Array of sessions" } } },
+      "post": {
+        "summary": "Create session",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/SessionInput" } } } },
+        "responses": { "201": { "description": "Created" }, "400": { "description": "Bad request" } }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": { "type": "http", "scheme": "bearer", "bearerFormat": "JWT" }
+    },
+    "schemas": {
+      "RegisterRequest": { "type": "object", "properties": { "login": { "type": "string" }, "password": { "type": "string" }, "name": { "type": "string" } }, "required": ["login","password"] },
+      "LoginRequest": { "type": "object", "properties": { "login": { "type": "string" }, "password": { "type": "string" } }, "required": ["login","password"] },
+      "AuthResponse": { "type": "object", "properties": { "access_token": { "type": "string" }, "token_type": { "type": "string" }, "user": { "$ref": "#/components/schemas/User" } } },
+      "User": { "type": "object", "properties": { "id": { "type": "string" }, "login": { "type": "string" }, "role": { "type": "string" }, "name": { "type": "string" } } },
+      "SessionInput": { "type": "object", "properties": { "church_id": { "type": "string" }, "preacher_id": { "type": "string" }, "start_at": { "type": "string", "format": "date-time" }, "end_at": { "type": "string", "format": "date-time" }, "service_type": { "type": "string" }, "notes": { "type": "string" } } }
+    }
+  }
+}
