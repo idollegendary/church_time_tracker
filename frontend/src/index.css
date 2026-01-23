@@ -164,6 +164,26 @@ input, select, textarea { @apply border border-transparent transition-colors }
   .badge-pill{ transition: none }
 }
 
+/* Awarded outline (admin-assigned) */
+.badge-awarded{ box-shadow: 0 0 0 3px rgba(99,102,241,0.06); position:relative; }
+.badge-awarded::after{ content: ''; position:absolute; inset: -4px; border-radius: 12px; pointer-events:none; background: linear-gradient(90deg, rgba(99,102,241,0.06), rgba(99,102,241,0.12)); filter: blur(8px); opacity:0.8; animation: pulseOutline 2.5s infinite; }
+
+@keyframes pulseOutline{
+  0%{ transform: scale(.98); opacity: .6 }
+  50%{ transform: scale(1.03); opacity: 1 }
+  100%{ transform: scale(.98); opacity: .6 }
+}
+
+/* Top-3 outlines */
+.gold-outline{ position:relative; }
+.gold-outline::after{ content:''; position:absolute; inset: -4px; border-radius: 12px; pointer-events:none; background: linear-gradient(90deg, rgba(255,215,0,0.18), rgba(255,215,0,0.06)); box-shadow: 0 6px 20px rgba(255,215,0,0.08); animation: glowGold 3s infinite linear; }
+.silver-outline::after{ content:''; position:absolute; inset: -4px; border-radius: 12px; pointer-events:none; background: linear-gradient(90deg, rgba(192,192,192,0.14), rgba(192,192,192,0.04)); box-shadow: 0 6px 20px rgba(192,192,192,0.06); animation: glowSilver 3s infinite linear; }
+.bronze-outline::after{ content:''; position:absolute; inset: -4px; border-radius: 12px; pointer-events:none; background: linear-gradient(90deg, rgba(205,127,50,0.14), rgba(205,127,50,0.04)); box-shadow: 0 6px 20px rgba(205,127,50,0.06); animation: glowBronze 3s infinite linear; }
+
+@keyframes glowGold{ 0%{ opacity:0.85 }50%{ opacity:1 }100%{ opacity:0.85 } }
+@keyframes glowSilver{ 0%{ opacity:0.7 }50%{ opacity:0.95 }100%{ opacity:0.7 } }
+@keyframes glowBronze{ 0%{ opacity:0.7 }50%{ opacity:0.95 }100%{ opacity:0.7 } }
+
 @keyframes badgePop{
   0%{ transform: scale(0.4); opacity: 0 }
   50%{ transform: scale(1.15); opacity: 1 }

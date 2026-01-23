@@ -7,6 +7,7 @@ const sessionsRoutes = require('./routes/sessions');
 const preachersRoutes = require('./routes/preachers');
 const churchesRoutes = require('./routes/churches');
 const analyticsRoutes = require('./routes/analytics');
+const badgesRoutes = require('./routes/badges');
 
 const app = express();
 
@@ -121,6 +122,7 @@ app.use('/api/sessions', sessionsRoutes);
 app.use('/api/preachers', preachersRoutes);
 app.use('/api/churches', churchesRoutes);
 app.use('/api/analytics', analyticsRoutes);
+app.use('/api/badges', badgesRoutes);
 
 app.use((err, req, res, next) => {
   try {

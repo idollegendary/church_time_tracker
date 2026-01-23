@@ -17,20 +17,13 @@ export default function LeaderBoard(){
   const [badges, setBadges] = useState([])
   const [assignments, setAssignments] = useState({})
   const [showBadgeModal, setShowBadgeModal] = useState(false)
-  const [newBadgeLabel, setNewBadgeLabel] = useState('')
-  const [newBadgeEmoji, setNewBadgeEmoji] = useState('🏅')
-  const [newBadgeColor, setNewBadgeColor] = useState('text-yellow-600')
+  
 
   useEffect(() => { fetchData() }, [])
 
   useEffect(()=>{
-    // load badges and assignments from localStorage
-    try{
-      const raw = localStorage.getItem('trecker:badges')
-      const rawA = localStorage.getItem('trecker:badgeAssignments')
-      if(raw) setBadges(JSON.parse(raw))
-      if(rawA) setAssignments(JSON.parse(rawA))
-    }catch(e){/* ignore */}
+    // refresh badges/assignments occasionally
+    // (initial load done via fetchData)
   }, [])
 
   async function fetchData(){
@@ -43,6 +36,15 @@ export default function LeaderBoard(){
       setPreachers(p.data)
       setSessions(s.data)
       setChurches(c.data)
+      // fetch badges and assignments from server
+      try{
+        const [bRes, aRes] = await Promise.all([
+          axios.get('/api/badges'),
+          axios.get('/api/badges/assignments')
+        ])
+        setBadges(bRes.data || [])
+        setAssignments(aRes.data || {})
+      }catch(err){ console.warn('Failed to load badges/assignments', err) }
     }catch(e){ console.error(e) }
   }
 
@@ -107,41 +109,7 @@ export default function LeaderBoard(){
     return { topByTotal, topByCount, topByAvg }
   }, [stats])
 
-  // helper: user-defined badges and assignments are separate from computed top badges
-  function persistBadges(list){ setBadges(list); localStorage.setItem('trecker:badges', JSON.stringify(list)) }
-  function persistAssignments(map){ setAssignments(map); localStorage.setItem('trecker:badgeAssignments', JSON.stringify(map)) }
-
-  function createBadge(){
-    if(!newBadgeLabel) return alert('Badge label required')
-    const id = `b_${Date.now()}`
-    const b = { id, label: newBadgeLabel, emoji: newBadgeEmoji, color: newBadgeColor }
-    persistBadges([...(badges||[]), b])
-    setNewBadgeLabel('')
-    setNewBadgeEmoji('🏅')
-  }
-
-  function deleteBadge(id){
-    const nb = (badges||[]).filter(b=>b.id!==id)
-    persistBadges(nb)
-    // remove from assignments
-    const na = { ...assignments }
-    Object.keys(na).forEach(k=>{ na[k] = na[k].filter(x=> x!==id) })
-    persistAssignments(na)
-  }
-
-  function assignBadge(preacherId, badgeId){
-    const cur = assignments[preacherId] || []
-    if(cur.includes(badgeId)) return
-    const next = { ...assignments, [preacherId]: [...cur, badgeId] }
-    persistAssignments(next)
-  }
-
-  function removeAssignedBadge(preacherId, badgeId){
-    const cur = assignments[preacherId] || []
-    const nextArr = cur.filter(x=> x!==badgeId)
-    const next = { ...assignments, [preacherId]: nextArr }
-    persistAssignments(next)
-  }
+  // Assignments and badges are stored on the server; BadgeModal performs create/update/delete/assign operations.
 
   function getBadge(preacherId){
     const badgeList = []
@@ -200,26 +168,9 @@ export default function LeaderBoard(){
             Очистити
           </Button>
         </div>
-        <div className="pt-2 border-t flex flex-col sm:flex-row gap-2 items-start sm:items-center">
+        <div className="pt-2 border-t flex items-center">
           <div className="flex items-center gap-2">
-            <input className="w-12 text-center" value={newBadgeEmoji} onChange={e=>setNewBadgeEmoji(e.target.value)} />
-            <input placeholder="Назва бейджу" className="border rounded px-2 py-1" value={newBadgeLabel} onChange={e=>setNewBadgeLabel(e.target.value)} />
-            <select className="border rounded px-2 py-1" value={newBadgeColor} onChange={e=>setNewBadgeColor(e.target.value)}>
-              <option value="text-yellow-600">Yellow</option>
-              <option value="text-red-600">Red</option>
-              <option value="text-blue-600">Blue</option>
-              <option value="text-green-600">Green</option>
-            </select>
-            <Button size="sm" variant="primary" onClick={createBadge}>Create Badge</Button>
-          </div>
-          <div className="ml-auto flex gap-2 flex-wrap items-center">
             <Button size="sm" variant="secondary" onClick={(e)=>{ e.stopPropagation(); setShowBadgeModal(true) }}>Manage Badges</Button>
-            {(badges||[]).map(b => (
-              <div key={b.id} className="flex items-center gap-2">
-                <div className={`badge-pill ${b.id ? 'badge-pop' : ''} ${b.color}`}><span className="badge-emoji">{b.emoji}</span> {b.label}</div>
-                <button className="text-xs text-muted ml-1" onClick={(e)=>{ e.stopPropagation(); deleteBadge(b.id) }}>×</button>
-              </div>
-            ))}
           </div>
         </div>
       </Card>
@@ -236,7 +187,7 @@ export default function LeaderBoard(){
             return (
               <Card
                 key={item.preacher.id}
-                className="p-4 cursor-pointer transition-colors hover:bg-surface"
+                className={`p-4 cursor-pointer transition-colors hover:bg-surface ${ (assignments[item.preacher.id] && assignments[item.preacher.id].length>0) ? 'badge-awarded' : '' } ${idx === 0 ? 'gold-outline' : idx === 1 ? 'silver-outline' : idx === 2 ? 'bronze-outline' : ''}`}
                 onClick={() => setExpandedId(isExpanded ? null : item.preacher.id)}
               >
                 <div className="flex items-start gap-4">

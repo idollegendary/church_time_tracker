@@ -54,6 +54,26 @@ async function migrate() {
       )
     `);
 
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS badges (
+        id VARCHAR PRIMARY KEY,
+        label VARCHAR NOT NULL,
+        emoji VARCHAR,
+        color VARCHAR,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+      )
+    `);
+
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS badge_assignments (
+        preacher_id VARCHAR NOT NULL,
+        badge_id VARCHAR NOT NULL,
+        assigned_by VARCHAR,
+        assigned_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
+        PRIMARY KEY (preacher_id, badge_id)
+      )
+    `);
+
     await client.query('COMMIT');
     console.log('Migrations applied');
   } catch (err) {
