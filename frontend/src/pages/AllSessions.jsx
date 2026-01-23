@@ -13,8 +13,7 @@ export default function AllSessions(){
   const [churches,setChurches] = useState([])
   const [preachers,setPreachers] = useState([])
   const [filters, setFilters] = useState({church_id: '', preacher_id: '', from: '', to: ''})
-  const [sortBy, setSortBy] = useState('start_at')
-  const [sortOrder, setSortOrder] = useState('desc')
+  const [sortType, setSortType] = useState('newest') // 'newest', 'oldest', 'longest', 'shortest'
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(20)
   const [editingSession, setEditingSession] = useState(null)
@@ -59,11 +58,19 @@ export default function AllSessions(){
       // client-side fallback (same inclusive logic)
       if(filters.from){ const fromT = new Date(filters.from).getTime(); items = items.filter(s=> new Date(s.start_at || s.created_at).getTime() >= fromT) }
       if(filters.to){ const toDate = new Date(filters.to); toDate.setDate(toDate.getDate() + 1); const toT = toDate.getTime(); items = items.filter(s=> new Date(s.start_at || s.created_at).getTime() < toT) }
-      // sorting
+      // sorting based on sortType
       items.sort((a,b)=>{
-        let av = (sortBy === 'duration_sec') ? (a.duration_sec||0) : new Date(a.start_at||a.created_at).getTime()
-        let bv = (sortBy === 'duration_sec') ? (b.duration_sec||0) : new Date(b.start_at||b.created_at).getTime()
-        return sortOrder === 'asc' ? av - bv : bv - av
+        let av, bv
+        const isByDuration = sortType === 'longest' || sortType === 'shortest'
+        if(isByDuration){
+          av = a.duration_sec || 0
+          bv = b.duration_sec || 0
+        } else {
+          av = new Date(a.start_at || a.created_at).getTime()
+          bv = new Date(b.start_at || b.created_at).getTime()
+        }
+        if(sortType === 'newest' || sortType === 'longest') return bv - av
+        else return av - bv
       })
       setSessions(items)
       setPage(1)
@@ -114,16 +121,12 @@ export default function AllSessions(){
           <input type="date" className="border rounded px-2 py-1" value={filters.to} onChange={e=> setFilters(f=> ({...f, to: e.target.value}))} />
         </label>
 
-        <label className="flex items-center gap-2">Sort by:
-          <select className="border rounded px-2 py-1" value={sortBy} onChange={e=> { setSortBy(e.target.value); }}>
-            <option value="start_at">Date</option>
-            <option value="duration_sec">Duration</option>
-          </select>
-        </label>
-        <label className="flex items-center gap-2">Order:
-          <select className="border rounded px-2 py-1" value={sortOrder} onChange={e=> setSortOrder(e.target.value)}>
-            <option value="desc">Newest/Longest</option>
-            <option value="asc">Oldest/Shortest</option>
+        <label className="flex items-center gap-2">Sort:
+          <select className="border rounded px-2 py-1" value={sortType} onChange={e=> { setSortType(e.target.value); setPage(1); }}>
+            <option value="newest">Newest</option>
+            <option value="oldest">Oldest</option>
+            <option value="longest">Longest</option>
+            <option value="shortest">Shortest</option>
           </select>
         </label>
 
