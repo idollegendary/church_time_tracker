@@ -1,2 +1,9 @@
+# Local env files
+.env
+.env.local
+
+# Vercel/local artifacts
+.vercel
+.env.local
 .vercel
 .env*.local
