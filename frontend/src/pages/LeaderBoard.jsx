@@ -26,6 +26,16 @@ export default function LeaderBoard(){
     // (initial load done via fetchData)
   }, [])
 
+  // helper: check if current user is admin (stored by login flow)
+  function isAdmin(){
+    try{
+      const raw = localStorage.getItem('trecker:user')
+      if(!raw) return false
+      const u = JSON.parse(raw)
+      return u && (u.role === 'admin' || u.role === 'superadmin')
+    }catch(e){ return false }
+  }
+
   async function fetchData(){
     try{
       const [p, s, c] = await Promise.all([
@@ -170,7 +180,7 @@ export default function LeaderBoard(){
         </div>
         <div className="pt-2 border-t flex items-center">
           <div className="flex items-center gap-2">
-            <Button size="sm" variant="secondary" onClick={(e)=>{ e.stopPropagation(); setShowBadgeModal(true) }}>Manage Badges</Button>
+            {isAdmin() && <Button size="sm" variant="secondary" onClick={(e)=>{ e.stopPropagation(); setShowBadgeModal(true) }}>Manage Badges</Button>}
           </div>
         </div>
       </Card>
@@ -256,17 +266,10 @@ export default function LeaderBoard(){
                             )}
                           </ul>
                         </div>
-                        <div className="pt-2">
-                          <div className="text-sm font-medium">Нагороди:</div>
-                          <div className="flex items-center gap-2 mt-2 flex-wrap">
-                            <select className="border rounded px-2 py-1" onClick={e=>e.stopPropagation()} id={`assign-${item.preacher.id}`}>
-                              <option value="">Вибрати бейдж...</option>
-                              {(badges||[]).map(b => <option key={b.id} value={b.id}>{b.emoji} {b.label}</option>)}
-                            </select>
-                            <Button size="sm" variant="primary" onClick={(e)=>{ e.stopPropagation(); const sel = document.getElementById(`assign-${item.preacher.id}`); if(sel && sel.value) assignBadge(item.preacher.id, sel.value) }}>Assign</Button>
-                            <div className="text-xs text-muted">Натисніть × на бейджі, щоб видалити.</div>
-                          </div>
-                        </div>
+                                        <div className="pt-2">
+                                          <div className="text-sm font-medium">Нагороди керуються в модалці</div>
+                                          <div className="text-xs text-muted">Відкрийте «Manage Badges», щоб призначати або створювати бейджі.</div>
+                                        </div>
                       </div>
                     )}
                   </div>
@@ -276,7 +279,7 @@ export default function LeaderBoard(){
           })
         )}
       </div>
-        <BadgeModal open={showBadgeModal} badges={badges} onClose={()=>setShowBadgeModal(false)} onChange={persistBadges} onDelete={deleteBadge} />
+        <BadgeModal open={showBadgeModal} badges={badges} onClose={()=>{ setShowBadgeModal(false); fetchData() }} onChange={(list)=>setBadges(list)} onDelete={(id)=>{ setBadges(prev => prev.filter(b=>b.id!==id)); fetchData() }} />
     </div>
   )
 }
