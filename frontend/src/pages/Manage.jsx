@@ -132,3 +132,7 @@ export default function Manage(){
           })}
         </div>
       )}
+
+    </AdminLayout>
+  )
+}
