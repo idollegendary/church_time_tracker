@@ -14,6 +14,15 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json());
 
+// Serve API documentation (Swagger UI)
+try {
+  const swaggerUi = require('swagger-ui-express');
+  const openapiSpec = require('./docs/openapi.json');
+  app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(openapiSpec));
+} catch (e) {
+  console.warn('Swagger UI not available:', e && e.message);
+}
+
 app.get('/health', (req, res) => res.json({ status: 'ok' }));
 
 app.use('/api/auth', authRoutes);
