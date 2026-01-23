@@ -22,6 +22,7 @@ export default function Timer(){
     const res = await axios.post('/api/sessions', body)
     setSessionId(res.data.id)
     setCreated(res.data)
+    return res.data.id
   }
 
   async function fetchMeta(){
@@ -106,16 +107,17 @@ export default function Timer(){
       alert('Please select a preacher before starting the timer')
       return
     }
-    if(!sessionId) await createSession()
+    let id = sessionId
+    if(!id) id = await createSession()
     try{
-      await axios.post(`/api/sessions/${sessionId}/start`)
+      await axios.post(`/api/sessions/${id}/start`)
       // fetch updated session to get start_at
-      const res = await axios.get('/api/sessions', { params: { session_id: sessionId } })
-      const s = res.data.find(x=> x.id===sessionId)
+      const res = await axios.get('/api/sessions', { params: { session_id: id } })
+      const s = res.data.find(x=> x.id===id)
       if(s){ setCreated(s); setElapsed(0) }
       setRunning(true)
       // persist running timer state
-      saveTimerState({ sessionId, running: true, sel })
+      saveTimerState({ sessionId: id, running: true, sel })
     }catch(e){console.error(e)}
   }
 
