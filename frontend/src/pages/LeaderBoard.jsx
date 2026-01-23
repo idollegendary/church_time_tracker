@@ -17,6 +17,8 @@ export default function LeaderBoard(){
   const [badges, setBadges] = useState([])
   const [assignments, setAssignments] = useState({})
   const [showBadgeModal, setShowBadgeModal] = useState(false)
+  const [assignTarget, setAssignTarget] = useState(null)
+  const [assignChoice, setAssignChoice] = useState('')
   
 
   useEffect(() => { fetchData() }, [])
@@ -56,6 +58,14 @@ export default function LeaderBoard(){
         setAssignments(aRes.data || {})
       }catch(err){ console.warn('Failed to load badges/assignments', err) }
     }catch(e){ console.error(e) }
+  }
+
+  async function removeAssignedBadge(preacherId, badgeId){
+    try{
+      await axios.delete(`/api/badges/assign?preacher_id=${encodeURIComponent(preacherId)}&badge_id=${encodeURIComponent(badgeId)}`)
+      const aRes = await axios.get('/api/badges/assignments')
+      setAssignments(aRes.data || {})
+    }catch(e){ console.error(e); alert('Unassign failed') }
   }
 
   // Compute stats for each preacher
@@ -125,17 +135,17 @@ export default function LeaderBoard(){
     const badgeList = []
     if(computedBadges.topByTotal.includes(preacherId)){
       const rank = computedBadges.topByTotal.indexOf(preacherId) + 1
-      if(rank === 1) badgeList.push({ label: '⭐ Найтриваліший', color: 'text-yellow-600' })
-      else if(rank === 2) badgeList.push({ label: '🥈 2-й за часом', color: 'text-gray-500' })
-      else badgeList.push({ label: '🥉 3-й за часом', color: 'text-orange-600' })
+      if(rank === 1) badgeList.push({ label: '⭐ Longest', color: 'text-yellow-600' })
+      else if(rank === 2) badgeList.push({ label: '🥈 2nd longest', color: 'text-gray-500' })
+      else badgeList.push({ label: '🥉 3rd longest', color: 'text-orange-600' })
     }
     if(computedBadges.topByCount.includes(preacherId)){
       const rank = computedBadges.topByCount.indexOf(preacherId) + 1
-      if(rank === 1) badgeList.push({ label: '🔥 Найактивніший', color: 'text-red-600' })
+      if(rank === 1) badgeList.push({ label: '🔥 Most active', color: 'text-red-600' })
     }
     if(computedBadges.topByAvg.includes(preacherId)){
       const rank = computedBadges.topByAvg.indexOf(preacherId) + 1
-      if(rank === 1) badgeList.push({ label: '💎 Найвушніший', color: 'text-blue-600' })
+      if(rank === 1) badgeList.push({ label: '💎 Top average', color: 'text-blue-600' })
     }
     return badgeList
   }
@@ -144,14 +154,14 @@ export default function LeaderBoard(){
     <div className="space-y-4">
       <div>
         <h3 className="text-xl font-semibold">LeaderBoard</h3>
-        <div className="text-sm text-muted">Рейтинг проповідників за метриками</div>
+        <div className="text-sm text-muted">Preachers ranking by metrics</div>
       </div>
 
       <Card className="space-y-3">
         <div className="flex gap-2 flex-wrap items-center">
           <input
             type="text"
-            placeholder="Пошук по імені..."
+            placeholder="Search by name..."
             className="border rounded px-3 py-2 flex-1 min-w-[200px]"
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
@@ -161,7 +171,7 @@ export default function LeaderBoard(){
             value={churchFilter}
             onChange={e => setChurchFilter(e.target.value)}
           >
-            <option value="">Всі церкви</option>
+            <option value="">All churches</option>
             {churches.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
           </select>
           <select
@@ -169,13 +179,13 @@ export default function LeaderBoard(){
             value={sortType}
             onChange={e => setSortType(e.target.value)}
           >
-            <option value="total_time">За загальним часом</option>
-            <option value="avg_time">За середнім часом</option>
-            <option value="count">За кількістю сесій</option>
-            <option value="effectiveness">За активністю</option>
+            <option value="total_time">Total time</option>
+            <option value="avg_time">Avg time</option>
+            <option value="count">Session count</option>
+            <option value="effectiveness">Effectiveness</option>
           </select>
           <Button size="sm" variant="secondary" onClick={() => { setSearchQuery(''); setChurchFilter(''); setSortType('total_time'); }}>
-            Очистити
+            Clear
           </Button>
         </div>
         <div className="pt-2 border-t flex items-center">
@@ -188,7 +198,7 @@ export default function LeaderBoard(){
       <div className="space-y-3">
         {filtered.length === 0 ? (
           <Card className="p-4 text-center text-muted">
-            Проповідників не знайдено
+            <div className="text-sm text-muted">No preachers found</div>
           </Card>
         ) : (
           filtered.map((item, idx) => {
@@ -235,41 +245,63 @@ export default function LeaderBoard(){
 
                     <div className="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-2 text-sm">
                       <div>
-                        <div className="text-muted text-xs">Загальний час</div>
+                        <div className="text-muted text-xs">Total time</div>
                         <div className="font-semibold tabular-nums">{formatDuration(item.totalSeconds)}</div>
                       </div>
                       <div>
-                        <div className="text-muted text-xs">Середній час</div>
+                        <div className="text-muted text-xs">Avg time</div>
                         <div className="font-semibold tabular-nums">{formatDuration(item.avgSeconds)}</div>
                       </div>
                       <div>
-                        <div className="text-muted text-xs">Кількість сесій</div>
+                        <div className="text-muted text-xs">Session count</div>
                         <div className="font-semibold tabular-nums">{item.sessionCount}</div>
                       </div>
                       <div>
-                        <div className="text-muted text-xs">Активність</div>
+                        <div className="text-muted text-xs">Engagement</div>
                         <div className="font-semibold tabular-nums">{item.effectiveness}</div>
                       </div>
                     </div>
-
                     {isExpanded && (
                       <div className="mt-4 pt-4 border-t space-y-2">
                         <div className="text-sm">
-                          <div className="font-medium">Детальна статистика:</div>
+                          <div className="font-medium">Detailed statistics:</div>
                           <ul className="text-muted text-xs mt-2 space-y-1">
-                            <li>• Всього проповідей: <span className="font-medium">{item.sessionCount}</span></li>
-                            <li>• Сумарний час: <span className="font-medium">{formatDuration(item.totalSeconds)}</span></li>
-                            <li>• Середня довжина сесії: <span className="font-medium">{formatDuration(item.avgSeconds)}</span></li>
-                            <li>• Церква: <span className="font-medium">{item.churchName}</span></li>
+                            <li>• Total sessions: <span className="font-medium">{item.sessionCount}</span></li>
+                            <li>• Total time: <span className="font-medium">{formatDuration(item.totalSeconds)}</span></li>
+                            <li>• Average session: <span className="font-medium">{formatDuration(item.avgSeconds)}</span></li>
+                            <li>• Church: <span className="font-medium">{item.churchName}</span></li>
                             {item.sessionCount > 0 && (
-                              <li>• Рейтинг вушності: <span className="font-medium">⭐⭐⭐ ({Math.round(item.effectiveness / Math.max(1, item.sessionCount) * 10)}/10)</span></li>
+                              <li>• Engagement rating: <span className="font-medium">⭐⭐⭐ ({Math.round(item.effectiveness / Math.max(1, item.sessionCount) * 10)}/10)</span></li>
                             )}
                           </ul>
                         </div>
-                                        <div className="pt-2">
-                                          <div className="text-sm font-medium">Нагороди керуються в модалці</div>
-                                          <div className="text-xs text-muted">Відкрийте «Manage Badges», щоб призначати або створювати бейджі.</div>
-                                        </div>
+                        <div className="pt-2">
+                          {isAdmin() ? (
+                            <div className="space-y-2">
+                              {!assignTarget && (
+                                <div className="flex items-center gap-2">
+                                  <Button size="sm" variant="primary" onClick={(e)=>{ e.stopPropagation(); setAssignTarget(item.preacher.id); setAssignChoice('') }}>Assign badge</Button>
+                                </div>
+                              )}
+
+                              {assignTarget === item.preacher.id && (
+                                <div className="flex items-center gap-2">
+                                  <select className="border rounded px-2 py-1" value={assignChoice} onChange={e=>setAssignChoice(e.target.value)}>
+                                    <option value="">Select badge...</option>
+                                    {(badges||[]).map(b=> <option key={b.id} value={b.id}>{b.emoji} {b.label}</option>)}
+                                  </select>
+                                  <Button size="sm" variant="primary" onClick={async (e)=>{ e.stopPropagation(); if(!assignChoice) return alert('Select a badge'); try{ await axios.post('/api/badges/assign', { preacher_id: item.preacher.id, badge_id: assignChoice }); const aRes = await axios.get('/api/badges/assignments'); setAssignments(aRes.data || {}); setAssignTarget(null); setAssignChoice(''); }catch(err){ console.error(err); alert('Assign failed') } }}>Assign</Button>
+                                  <Button size="sm" variant="secondary" onClick={(e)=>{ e.stopPropagation(); setAssignTarget(null); setAssignChoice('') }}>Cancel</Button>
+                                </div>
+                              )}
+
+                              <div className="text-sm font-medium">Assigned badges</div>
+                              <div className="text-xs text-muted">Click × to remove an assigned badge.</div>
+                            </div>
+                          ) : (
+                            <div className="text-sm font-medium">Badges are managed in Admin</div>
+                          )}
+                        </div>
                       </div>
                     )}
                   </div>
