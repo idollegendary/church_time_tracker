@@ -102,19 +102,19 @@ export default function Manage(){
         open={editOpen}
         title={editType === 'church' ? (editEntity?.id ? 'Edit Church' : 'New Church') : (editEntity?.id ? 'Edit Preacher' : 'New Preacher')}
         initial={editEntity || {}}
-        fields={ editType === 'church'
-          ? [ { key: 'name', label: 'Name' } ]
-          : [
-              { key: 'name', label: 'Name' },
-              { key: 'church_id', label: 'Church', type: 'select', options: churches.map(c=>({ value: c.id, label: c.name })) },
-              { key: 'avatar_url', label: 'Avatar URL' }
-            ]
-        }
-        onClose={()=>setEditOpen(false)}
-        onSave={handleSave}
-      />
-
-      <ConfirmModal open={confirmOpen} title="Delete" description="This will remove the item and cannot be undone." onCancel={()=>{ setConfirmOpen(false); setToDeleteId(null) }} onConfirm={()=>doDelete(toDeleteId)} />
-    </AdminLayout>
-  )
-}
+        {active === 'churches' ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {churches.map(c => {
+              const preachersFor = preachers.filter(p=>p.church_id === c.id)
+              const sess = sessions.filter(s => s.church_id === c.id)
+              return <ChurchCard key={c.id} church={c} preachers={preachersFor} sessions={sess} onEdit={openEdit} onDelete={requestDelete} />
+            })}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {preachers.map(p => {
+              const sess = sessions.filter(s => s.preacher_id === p.id)
+              return <PreacherCard key={p.id} preacher={p} churchName={churchMap[p.church_id]?.name} sessions={sess} onEdit={openEdit} onDelete={requestDelete} />
+            })}
+          </div>
+        )}
