@@ -14,6 +14,19 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json());
 
+// Relax Content Security Policy for docs routes so CDN-hosted Swagger UI can load.
+app.use((req, res, next) => {
+  try {
+    if (req.path === '/api/docs' || req.path.startsWith('/api/docs/') || req.path === '/docs' || req.path.startsWith('/docs/')) {
+      // Allow loading scripts/styles from https and blobs, and allow inline styles/scripts for the docs page only.
+      res.setHeader('Content-Security-Policy', "default-src 'self' https: data:; img-src 'self' data:; style-src 'self' https: 'unsafe-inline'; script-src 'self' https: 'unsafe-inline' blob:;");
+    }
+  } catch (e) {
+    // ignore
+  }
+  next();
+});
+
 // Serve API documentation (Swagger UI)
 try {
   const swaggerUi = require('swagger-ui-express');
