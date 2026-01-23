@@ -165,24 +165,30 @@ input, select, textarea { @apply border border-transparent transition-colors }
 }
 
 /* Awarded outline (admin-assigned) */
-.badge-awarded{ box-shadow: 0 0 0 3px rgba(99,102,241,0.06); position:relative; }
-.badge-awarded::after{ content: ''; position:absolute; inset: -4px; border-radius: 12px; pointer-events:none; background: linear-gradient(90deg, rgba(99,102,241,0.06), rgba(99,102,241,0.12)); filter: blur(8px); opacity:0.8; animation: pulseOutline 2.5s infinite; }
+.badge-awarded{ position:relative; box-shadow: 0 0 0 3px rgba(99,102,241,0.06) }
+.badge-awarded::after{ content: ''; position:absolute; inset: -6px; border-radius: 14px; pointer-events:none; background: radial-gradient(circle at 20% 20%, rgba(99,102,241,0.12), rgba(99,102,241,0.02)); filter: blur(6px); opacity:0.9; animation: pulseOutline 2.5s infinite; }
 
 @keyframes pulseOutline{
-  0%{ transform: scale(.98); opacity: .6 }
-  50%{ transform: scale(1.03); opacity: 1 }
-  100%{ transform: scale(.98); opacity: .6 }
+  0%{ transform: scale(.99); opacity: .6 }
+  50%{ transform: scale(1.02); opacity: 1 }
+  100%{ transform: scale(.99); opacity: .6 }
 }
 
-/* Top-3 outlines */
-.gold-outline{ position:relative; }
-.gold-outline::after{ content:''; position:absolute; inset: -4px; border-radius: 12px; pointer-events:none; background: linear-gradient(90deg, rgba(255,215,0,0.18), rgba(255,215,0,0.06)); box-shadow: 0 6px 20px rgba(255,215,0,0.08); animation: glowGold 3s infinite linear; }
-.silver-outline::after{ content:''; position:absolute; inset: -4px; border-radius: 12px; pointer-events:none; background: linear-gradient(90deg, rgba(192,192,192,0.14), rgba(192,192,192,0.04)); box-shadow: 0 6px 20px rgba(192,192,192,0.06); animation: glowSilver 3s infinite linear; }
-.bronze-outline::after{ content:''; position:absolute; inset: -4px; border-radius: 12px; pointer-events:none; background: linear-gradient(90deg, rgba(205,127,50,0.14), rgba(205,127,50,0.04)); box-shadow: 0 6px 20px rgba(205,127,50,0.06); animation: glowBronze 3s infinite linear; }
+/* Top-3 outlines using box-shadow for better cross-browser visibility */
+.gold-outline{ position:relative; box-shadow: 0 0 0 3px rgba(255,215,0,0.18); }
+.gold-outline::after{ content:''; position:absolute; inset: -6px; border-radius: 14px; pointer-events:none; background: linear-gradient(90deg, rgba(255,215,0,0.14), rgba(255,215,0,0.04)); filter: blur(6px); animation: glowGold 3s infinite linear; }
+.silver-outline{ position:relative; box-shadow: 0 0 0 3px rgba(192,192,192,0.12); }
+.silver-outline::after{ content:''; position:absolute; inset: -6px; border-radius: 14px; pointer-events:none; background: linear-gradient(90deg, rgba(192,192,192,0.12), rgba(192,192,192,0.02)); filter: blur(6px); animation: glowSilver 3s infinite linear; }
+.bronze-outline{ position:relative; box-shadow: 0 0 0 3px rgba(205,127,50,0.12); }
+.bronze-outline::after{ content:''; position:absolute; inset: -6px; border-radius: 14px; pointer-events:none; background: linear-gradient(90deg, rgba(205,127,50,0.12), rgba(205,127,50,0.02)); filter: blur(6px); animation: glowBronze 3s infinite linear; }
 
 @keyframes glowGold{ 0%{ opacity:0.85 }50%{ opacity:1 }100%{ opacity:0.85 } }
 @keyframes glowSilver{ 0%{ opacity:0.7 }50%{ opacity:0.95 }100%{ opacity:0.7 } }
 @keyframes glowBronze{ 0%{ opacity:0.7 }50%{ opacity:0.95 }100%{ opacity:0.7 } }
+
+/* Assigned badge pill with animated outline */
+.assigned-pill{ position:relative; }
+.assigned-pill::after{ content:''; position:absolute; inset: -4px; border-radius: 999px; pointer-events:none; background: linear-gradient(90deg, rgba(99,102,241,0.18), rgba(99,102,241,0.02)); filter: blur(6px); opacity:0.9; animation: pulseOutline 2s infinite; }
 
 @keyframes badgePop{
   0%{ transform: scale(0.4); opacity: 0 }
