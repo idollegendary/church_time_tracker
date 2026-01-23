@@ -24,9 +24,10 @@ export default function Manage(){
 
   async function fetchChurches(){
     try{ const res = await axios.get('/api/churches'); setChurches(res.data); const map={}; res.data.forEach(c=>map[c.id]=c); setChurchMap(map) }catch(e){console.error(e)}
+  const [sessions, setSessions] = useState([])
   }
 
-  async function fetchPreachers(){
+  useEffect(()=>{ fetchChurches(); fetchPreachers(); fetchSessions() }, [])
     try{ const res = await axios.get('/api/preachers'); setPreachers(res.data) }catch(e){console.error(e)}
   }
 
@@ -81,7 +82,21 @@ export default function Manage(){
         )}
       </Card>
 
-      <AdminEditModal open={editOpen} title={editType === 'church' ? (editEntity?.id ? 'Edit Church' : 'New Church') : (editEntity?.id ? 'Edit Preacher' : 'New Preacher')} initial={editEntity || {}} fields={ editType === 'church' ? [ { key: 'name', label: 'Name' } ] : [ { key: 'name', label: 'Name' }, { key: 'church_id', label: 'Church (id)' }, { key: 'avatar_url', label: 'Avatar URL' } ] } onClose={()=>setEditOpen(false)} onSave={handleSave} />
+      <AdminEditModal
+        open={editOpen}
+        title={editType === 'church' ? (editEntity?.id ? 'Edit Church' : 'New Church') : (editEntity?.id ? 'Edit Preacher' : 'New Preacher')}
+        initial={editEntity || {}}
+        fields={ editType === 'church'
+          ? [ { key: 'name', label: 'Name' } ]
+          : [
+              { key: 'name', label: 'Name' },
+              { key: 'church_id', label: 'Church', type: 'select', options: churches.map(c=>({ value: c.id, label: c.name })) },
+              { key: 'avatar_url', label: 'Avatar URL' }
+            ]
+        }
+        onClose={()=>setEditOpen(false)}
+        onSave={handleSave}
+      />
 
       <ConfirmModal open={confirmOpen} title="Delete" description="This will remove the item and cannot be undone." onCancel={()=>{ setConfirmOpen(false); setToDeleteId(null) }} onConfirm={()=>doDelete(toDeleteId)} />
     </AdminLayout>
