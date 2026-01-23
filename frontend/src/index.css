@@ -148,6 +148,22 @@ input, select, textarea { @apply border border-transparent transition-colors }
 .card-hero{ @apply rounded-lg overflow-hidden border border-transparent transition-shadow hover:shadow-lg }
 .card-hero .text-muted{ @apply text-gray-500 }
 
+/* Ensure hover bg is theme-aware so dark mode doesn't turn card white */
+.card:hover{ @apply bg-surface }
+.dark .card:hover{ @apply bg-neutral-800 }
+
+/* Badge styles and pop animation */
+.badge-pill{ @apply inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-white/90 text-neutral-900 shadow-sm }
+.dark .badge-pill{ @apply bg-neutral-700 text-gray-100 }
+.badge-emoji{ font-size:14px }
+.badge-pop{ transform-origin: center; animation: badgePop 700ms cubic-bezier(.2,.9,.2,1); }
+
+@keyframes badgePop{
+  0%{ transform: scale(0.4); opacity: 0 }
+  50%{ transform: scale(1.15); opacity: 1 }
+  100%{ transform: scale(1); opacity: 1 }
+}
+
 /* Avatar stack (overlapping) */
 .avatar-stack{ display:flex; align-items:center }
 .avatar-stack > *{ margin-left: -0.6rem }

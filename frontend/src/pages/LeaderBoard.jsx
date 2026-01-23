@@ -13,8 +13,23 @@ export default function LeaderBoard(){
   const [churchFilter, setChurchFilter] = useState('')
   const [sortType, setSortType] = useState('total_time') // 'total_time', 'avg_time', 'count', 'effectiveness'
   const [expandedId, setExpandedId] = useState(null)
+  const [badges, setBadges] = useState([])
+  const [assignments, setAssignments] = useState({})
+  const [newBadgeLabel, setNewBadgeLabel] = useState('')
+  const [newBadgeEmoji, setNewBadgeEmoji] = useState('🏅')
+  const [newBadgeColor, setNewBadgeColor] = useState('text-yellow-600')
 
   useEffect(() => { fetchData() }, [])
+
+  useEffect(()=>{
+    // load badges and assignments from localStorage
+    try{
+      const raw = localStorage.getItem('trecker:badges')
+      const rawA = localStorage.getItem('trecker:badgeAssignments')
+      if(raw) setBadges(JSON.parse(raw))
+      if(rawA) setAssignments(JSON.parse(rawA))
+    }catch(e){/* ignore */}
+  }, [])
 
   async function fetchData(){
     try{
@@ -81,8 +96,8 @@ export default function LeaderBoard(){
     return items
   }, [stats, searchQuery, churchFilter, sortType])
 
-  // Compute badges (top 3 in each category)
-  const badges = useMemo(() => {
+  // Compute top badges (computed by metrics)
+  const computedBadges = useMemo(() => {
     const topByTotal = [...stats].sort((a, b) => b.totalSeconds - a.totalSeconds).slice(0, 3).map(s => s.preacher.id)
     const topByCount = [...stats].sort((a, b) => b.sessionCount - a.sessionCount).slice(0, 3).map(s => s.preacher.id)
     const topByAvg = [...stats].sort((a, b) => b.avgSeconds - a.avgSeconds).slice(0, 3).map(s => s.preacher.id)
@@ -90,20 +105,56 @@ export default function LeaderBoard(){
     return { topByTotal, topByCount, topByAvg }
   }, [stats])
 
+  // helper: user-defined badges and assignments are separate from computed top badges
+  function persistBadges(list){ setBadges(list); localStorage.setItem('trecker:badges', JSON.stringify(list)) }
+  function persistAssignments(map){ setAssignments(map); localStorage.setItem('trecker:badgeAssignments', JSON.stringify(map)) }
+
+  function createBadge(){
+    if(!newBadgeLabel) return alert('Badge label required')
+    const id = `b_${Date.now()}`
+    const b = { id, label: newBadgeLabel, emoji: newBadgeEmoji, color: newBadgeColor }
+    persistBadges([...(badges||[]), b])
+    setNewBadgeLabel('')
+    setNewBadgeEmoji('🏅')
+  }
+
+  function deleteBadge(id){
+    const nb = (badges||[]).filter(b=>b.id!==id)
+    persistBadges(nb)
+    // remove from assignments
+    const na = { ...assignments }
+    Object.keys(na).forEach(k=>{ na[k] = na[k].filter(x=> x!==id) })
+    persistAssignments(na)
+  }
+
+  function assignBadge(preacherId, badgeId){
+    const cur = assignments[preacherId] || []
+    if(cur.includes(badgeId)) return
+    const next = { ...assignments, [preacherId]: [...cur, badgeId] }
+    persistAssignments(next)
+  }
+
+  function removeAssignedBadge(preacherId, badgeId){
+    const cur = assignments[preacherId] || []
+    const nextArr = cur.filter(x=> x!==badgeId)
+    const next = { ...assignments, [preacherId]: nextArr }
+    persistAssignments(next)
+  }
+
   function getBadge(preacherId){
     const badgeList = []
-    if(badges.topByTotal.includes(preacherId)){
-      const rank = badges.topByTotal.indexOf(preacherId) + 1
+    if(computedBadges.topByTotal.includes(preacherId)){
+      const rank = computedBadges.topByTotal.indexOf(preacherId) + 1
       if(rank === 1) badgeList.push({ label: '⭐ Найтриваліший', color: 'text-yellow-600' })
       else if(rank === 2) badgeList.push({ label: '🥈 2-й за часом', color: 'text-gray-500' })
       else badgeList.push({ label: '🥉 3-й за часом', color: 'text-orange-600' })
     }
-    if(badges.topByCount.includes(preacherId)){
-      const rank = badges.topByCount.indexOf(preacherId) + 1
+    if(computedBadges.topByCount.includes(preacherId)){
+      const rank = computedBadges.topByCount.indexOf(preacherId) + 1
       if(rank === 1) badgeList.push({ label: '🔥 Найактивніший', color: 'text-red-600' })
     }
-    if(badges.topByAvg.includes(preacherId)){
-      const rank = badges.topByAvg.indexOf(preacherId) + 1
+    if(computedBadges.topByAvg.includes(preacherId)){
+      const rank = computedBadges.topByAvg.indexOf(preacherId) + 1
       if(rank === 1) badgeList.push({ label: '💎 Найвушніший', color: 'text-blue-600' })
     }
     return badgeList
@@ -147,6 +198,27 @@ export default function LeaderBoard(){
             Очистити
           </Button>
         </div>
+        <div className="pt-2 border-t flex flex-col sm:flex-row gap-2 items-start sm:items-center">
+          <div className="flex items-center gap-2">
+            <input className="w-12 text-center" value={newBadgeEmoji} onChange={e=>setNewBadgeEmoji(e.target.value)} />
+            <input placeholder="Назва бейджу" className="border rounded px-2 py-1" value={newBadgeLabel} onChange={e=>setNewBadgeLabel(e.target.value)} />
+            <select className="border rounded px-2 py-1" value={newBadgeColor} onChange={e=>setNewBadgeColor(e.target.value)}>
+              <option value="text-yellow-600">Yellow</option>
+              <option value="text-red-600">Red</option>
+              <option value="text-blue-600">Blue</option>
+              <option value="text-green-600">Green</option>
+            </select>
+            <Button size="sm" variant="primary" onClick={createBadge}>Create Badge</Button>
+          </div>
+          <div className="ml-auto flex gap-2 flex-wrap">
+            {(badges||[]).map(b => (
+              <div key={b.id} className="flex items-center gap-2">
+                <div className={`badge-pill ${b.id ? 'badge-pop' : ''} ${b.color}`}><span className="badge-emoji">{b.emoji}</span> {b.label}</div>
+                <button className="text-xs text-muted ml-1" onClick={()=>deleteBadge(b.id)}>×</button>
+              </div>
+            ))}
+          </div>
+        </div>
       </Card>
 
       <div className="space-y-3">
@@ -178,13 +250,24 @@ export default function LeaderBoard(){
                       </div>
                     </div>
 
-                    <div className="mt-2 flex flex-wrap gap-2">
-                      {badgeList.map((badge, i) => (
-                        <span key={i} className={`text-xs font-medium ${badge.color}`}>
-                          {badge.label}
-                        </span>
-                      ))}
-                    </div>
+                            <div className="mt-2 flex flex-wrap gap-2 items-center">
+                              {badgeList.map((badge, i) => (
+                                <span key={i} className={`text-xs font-medium ${badge.color}`}>
+                                  {badge.label}
+                                </span>
+                              ))}
+                              {/* user-assigned badges */}
+                              {(assignments[item.preacher.id] || []).map(bid => {
+                                const b = (badges || []).find(x=>x.id===bid)
+                                if(!b) return null
+                                return (
+                                  <div key={b.id} className={`badge-pill badge-pop ${b.color}`}>
+                                    <span className="badge-emoji">{b.emoji}</span> {b.label}
+                                    <button className="ml-2 text-xs text-muted" onClick={(e)=>{ e.stopPropagation(); removeAssignedBadge(item.preacher.id, b.id) }}>×</button>
+                                  </div>
+                                )
+                              })}
+                            </div>
 
                     <div className="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-2 text-sm">
                       <div>
@@ -218,6 +301,17 @@ export default function LeaderBoard(){
                               <li>• Рейтинг вушності: <span className="font-medium">⭐⭐⭐ ({Math.round(item.effectiveness / Math.max(1, item.sessionCount) * 10)}/10)</span></li>
                             )}
                           </ul>
+                        </div>
+                        <div className="pt-2">
+                          <div className="text-sm font-medium">Нагороди:</div>
+                          <div className="flex items-center gap-2 mt-2 flex-wrap">
+                            <select className="border rounded px-2 py-1" onClick={e=>e.stopPropagation()} id={`assign-${item.preacher.id}`}>
+                              <option value="">Вибрати бейдж...</option>
+                              {(badges||[]).map(b => <option key={b.id} value={b.id}>{b.emoji} {b.label}</option>)}
+                            </select>
+                            <Button size="sm" variant="primary" onClick={(e)=>{ e.stopPropagation(); const sel = document.getElementById(`assign-${item.preacher.id}`); if(sel && sel.value) assignBadge(item.preacher.id, sel.value) }}>Assign</Button>
+                            <div className="text-xs text-muted">Натисніть × на бейджі, щоб видалити.</div>
+                          </div>
                         </div>
                       </div>
                     )}
