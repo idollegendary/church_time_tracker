@@ -34,3 +34,47 @@ npm run migrate
 ```
 
 After migrations, start the server and run smoke tests as described above.
+
+Create an admin user
+-------------------
+
+A small helper script is provided to create an admin user in the database using the existing `src/models/user` code.
+
+Usage (example):
+
+```bash
+cd backend-express
+# create user with login 'admin1337' and password 'admin1337'
+node scripts/create_admin.js admin1337 admin1337
+```
+
+Or set environment variables and run without args:
+
+```bash
+export ADMIN_LOGIN=admin1337
+export ADMIN_PASSWORD=admin1337
+node scripts/create_admin.js
+```
+
+The script will exit with code 0 if the user already exists or after successful creation, and non-zero on error.
+
+Deploying to Vercel
+-------------------
+
+You can deploy the `backend-express` folder to Vercel as a separate project. The repository includes a small adapter at `api/index.js` which forwards all requests to the existing Express `app`.
+
+Steps:
+
+```bash
+# from repository root
+cd backend-express
+# log in to vercel and link/create a project
+vercel login
+vercel init      # if you need to create a new project
+vercel           # follow prompts to deploy
+```
+
+Configure environment variables in the Vercel dashboard (`DATABASE_URL`, `JWT_SECRET`, `ADMIN_LOGIN`, etc.).
+
+Notes:
+- The `vercel.json` routes all requests to `api/index.js`, which calls the Express app. Adjust memory/timeouts in the Vercel project settings if needed.

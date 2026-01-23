@@ -5,6 +5,14 @@ dotenv.config();
 
 const connectionString = process.env.DATABASE_URL;
 
+// For some managed pools (Supabase pooler), the server presents certificates
+// that Node may reject. For quick dev/setup we disable TLS verification when
+// the connection string indicates a known managed host. Rotate to stricter
+// verification in production.
+if (connectionString && /supabase|pooler|supa|aws-1-us-east-1/.test(connectionString)) {
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+}
+
 let pool = null;
 let dbError = null;
 
@@ -17,7 +25,11 @@ if (connectionString) {
       dbError = `Invalid DATABASE_URL host: ${host || '<empty>'}`;
       console.error('DB config validation failed:', dbError);
     } else {
-      pool = new Pool({ connectionString });
+      // Some managed providers (Supabase pooled endpoints) require SSL and
+      // may present certificates that Node's default verification rejects.
+      // For simplicity in this dev flow we disable strict cert verification.
+      // In production consider using `sslmode=verify-full` and proper CA.
+      pool = new Pool({ connectionString, ssl: { rejectUnauthorized: false } });
     }
   } catch (e) {
     dbError = `Cannot parse DATABASE_URL: ${String(e.message)}`;
