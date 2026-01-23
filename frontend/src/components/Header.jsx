@@ -34,9 +34,9 @@ export default function Header(){
       <div className="flex items-center gap-3">
         <ThemeToggle />
         { !user ? (
-          <a href="#/login" className="text-sm text-primary mr-3">Login</a>
+          <a href="#/login" className="hidden sm:inline-block text-sm text-primary mr-3">Login</a>
         ) : (
-          <div className="flex items-center gap-3">
+          <div className="hidden sm:flex items-center gap-3">
             <span className="text-sm text-muted">{user.login}</span>
             <button onClick={()=>{ localStorage.removeItem('trecker:token'); localStorage.removeItem('trecker:user'); window.location.reload() }} className="text-sm text-primary">Logout</button>
           </div>

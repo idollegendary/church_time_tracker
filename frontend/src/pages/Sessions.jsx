@@ -124,13 +124,13 @@ export default function Sessions(){
               <div key={s.id} className="card p-4 card-hover">
                 <div className="flex items-start gap-3">
                   <Avatar src={preacherMap[s.preacher_id]?.avatar_url} name={preacherMap[s.preacher_id]?.name} id={s.preacher_id} size={48} />
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <div className="font-medium text-sm">{preacherMap[s.preacher_id]?.name || '—'}</div>
-                        <div className="text-xs text-muted">{churchMap[s.church_id]?.name || '—'}</div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="min-w-0">
+                        <div className="font-medium text-sm truncate">{preacherMap[s.preacher_id]?.name || '—'}</div>
+                        <div className="text-xs text-muted truncate">{churchMap[s.church_id]?.name || '—'}</div>
                       </div>
-                      <div className="text-sm font-semibold text-primary">{formatDuration(s.duration_sec)}</div>
+                      <div className="text-sm font-semibold text-primary flex-shrink-0 text-right max-w-[8rem] truncate">{formatDuration(s.duration_sec)}</div>
                     </div>
 
                     <div className="mt-2 text-sm text-muted">
@@ -138,7 +138,7 @@ export default function Sessions(){
                       <div className="mt-1 text-xs text-muted">{s.end_at ? formatDateTime(s.end_at) : '-'}</div>
                     </div>
 
-                    {s.notes ? <div className="mt-3 text-sm text-muted line-clamp-3">{s.notes}</div> : null}
+                    {s.notes ? <div className="mt-3 text-sm text-muted line-clamp-3 break-words">{s.notes}</div> : null}
 
                     <div className="mt-3 flex items-center gap-2">
                       <Button variant="secondary" size="sm" onClick={()=>{ setEditingId(s.id); setEditingSession(s) }}>Edit</Button>
@@ -170,18 +170,18 @@ export default function Sessions(){
               <div key={s.id} className="card p-3 card-hover">
                 <div className="flex items-start gap-3">
                   <Avatar src={preacherMap[s.preacher_id]?.avatar_url} name={preacherMap[s.preacher_id]?.name} id={s.preacher_id} size={48} />
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <div className="font-medium">{preacherMap[s.preacher_id]?.name || '—'}</div>
-                        <div className="text-xs text-gray-500">{churchMap[s.church_id]?.name || '—'}</div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="min-w-0">
+                        <div className="font-medium truncate">{preacherMap[s.preacher_id]?.name || '—'}</div>
+                        <div className="text-xs text-gray-500 truncate">{churchMap[s.church_id]?.name || '—'}</div>
                       </div>
-                      <div className="text-sm font-medium">{formatDuration(s.duration_sec)}</div>
+                      <div className="text-sm font-medium flex-shrink-0 max-w-[6rem] text-right truncate">{formatDuration(s.duration_sec)}</div>
                     </div>
 
                     <div className="mt-2 text-sm text-gray-600">
                       <div>{s.start_at ? formatDateTime(s.start_at) : '-' } — {s.end_at ? formatDateTime(s.end_at) : '-'}</div>
-                      {s.notes ? <div className="mt-2 text-sm text-gray-700">{s.notes}</div> : null}
+                      {s.notes ? <div className="mt-2 text-sm text-gray-700 line-clamp-3 break-words">{s.notes}</div> : null}
                     </div>
 
                     <div className="mt-3 flex gap-2">
