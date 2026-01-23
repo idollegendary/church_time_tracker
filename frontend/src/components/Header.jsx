@@ -26,6 +26,7 @@ export default function Header(){
           <NavLink href="#/sessions">Sessions</NavLink>
           <NavLink href="#/all-sessions">All Sessions</NavLink>
           <NavLink href="#/timer">Timer</NavLink>
+          <NavLink href="#/leaderboard">LeaderBoard</NavLink>
           <NavLink href="#/dashboard">Dashboard</NavLink>
           <NavLink href="#/manage">Manage</NavLink>
         </nav>
@@ -52,6 +53,7 @@ export default function Header(){
           <a href="#/sessions" onClick={()=>setMobileOpen(false)} className="text-primary">Sessions</a>
           <a href="#/all-sessions" onClick={()=>setMobileOpen(false)} className="text-primary">All Sessions</a>
           <a href="#/timer" onClick={()=>setMobileOpen(false)} className="text-primary">Timer</a>
+          <a href="#/leaderboard" onClick={()=>setMobileOpen(false)} className="text-primary">LeaderBoard</a>
           <a href="#/dashboard" onClick={()=>setMobileOpen(false)} className="text-primary">Dashboard</a>
           <a href="#/manage" onClick={()=>setMobileOpen(false)} className="text-primary">Manage</a>
           { !localStorage.getItem('trecker:token') ? <a href="#/login" onClick={()=>setMobileOpen(false)} className="text-primary">Login</a> : <a href="#/" onClick={()=>{ localStorage.removeItem('trecker:token'); localStorage.removeItem('trecker:user'); setMobileOpen(false); window.location.reload() }} className="text-primary">Logout</a> }

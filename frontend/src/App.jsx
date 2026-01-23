@@ -5,6 +5,7 @@ import Timer from './pages/Timer'
 import Dashboard from './pages/Dashboard'
 import Manage from './pages/Manage'
 import AllSessions from './pages/AllSessions'
+import LeaderBoard from './pages/LeaderBoard'
 import './index.css'
 import Header from './components/Header'
 import Login from './pages/Login'
@@ -59,6 +60,7 @@ function App() {
         {hash === '#/dashboard' && <Dashboard />}
         {hash === '#/manage' && (localStorage.getItem('trecker:token') ? <Manage /> : (window.location.hash = '#/login', null))}
         {hash === '#/all-sessions' && <AllSessions />}
+        {hash === '#/leaderboard' && <LeaderBoard />}
         {hash === '#/login' && <Login />}
         {(hash === '' || hash === '#/sessions' || !hash) && <Sessions />}
       </main>
