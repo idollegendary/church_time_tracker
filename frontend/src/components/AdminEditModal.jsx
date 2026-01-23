@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Button from './Button'
+import Avatar from './Avatar'
 
 export default function AdminEditModal({ open=false, title='Edit', initial={}, fields=[], onClose=()=>{}, onSave=()=>{} }){
   const [state, setState] = useState(initial)
@@ -20,7 +21,23 @@ export default function AdminEditModal({ open=false, title='Edit', initial={}, f
           {fields.map(f=> (
             <div key={f.key}>
               <label className="block text-sm mb-1">{f.label}</label>
-              {f.type === 'textarea' ? (
+              {f.key === 'avatar_url' ? (
+                <div className="flex items-start gap-3">
+                  <div>
+                    <Avatar src={state.avatar_url} name={state.name} size={64} />
+                  </div>
+                  <div className="flex-1">
+                    <input type="file" accept="image/*" onChange={e=>{
+                      const file = e.target.files && e.target.files[0]
+                      if(!file) return
+                      const reader = new FileReader()
+                      reader.onload = ev => setState(s=>({...s, avatar_url: ev.target.result}))
+                      reader.readAsDataURL(file)
+                    }} className="mb-2" />
+                    <input value={state[f.key] || ''} onChange={e=>setState(s=>({...s,[f.key]:e.target.value}))} placeholder="or paste image URL" className="w-full border rounded px-3 py-2" />
+                  </div>
+                </div>
+              ) : f.type === 'textarea' ? (
                 <textarea value={state[f.key] || ''} onChange={e=>setState(s=>({...s,[f.key]:e.target.value}))} className="w-full border rounded px-3 py-2" />
               ) : f.type === 'select' ? (
                 <select value={state[f.key] || ''} onChange={e=>setState(s=>({...s,[f.key]:e.target.value}))} className="w-full border rounded px-3 py-2">

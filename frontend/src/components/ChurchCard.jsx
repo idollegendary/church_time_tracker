@@ -13,7 +13,7 @@ export default function ChurchCard({ church, preachers = [], sessions = [], onEd
   const shown = preachers.slice(0,4)
 
   return (
-    <Card className="p-0 overflow-hidden card-hero">
+    <Card className="overflow-hidden card-hero">
       <div className="p-4 flex items-start gap-4">
         <div className="flex-shrink-0">
           <div className="w-16 h-16 rounded-lg flex items-center justify-center bg-gradient-to-br from-primary/80 to-primary/40 text-white text-lg font-semibold">{(church.name||'').split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase()}</div>
@@ -32,7 +32,7 @@ export default function ChurchCard({ church, preachers = [], sessions = [], onEd
               {shown.map(p => <Avatar key={p.id} src={p.avatar_url} name={p.name} id={p.id} size={40} className="-ml-3" />)}
             </div>
             <div className="ml-auto flex gap-2">
-              <Button variant="secondary" size="sm" onClick={()=>onEdit(church)}>Edit</Button>
+              <Button variant="secondary" size="sm" onClick={()=>onEdit('church', church)}>Edit</Button>
               <Button variant="danger" size="sm" onClick={()=>onDelete(church.id)}>Delete</Button>
             </div>
           </div>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import axios from '../services/api'
 import AdminLayout from '../components/AdminLayout'
-import AdminTable from '../components/AdminTable'
+// AdminTable removed — cards-only layout
 import AdminEditModal from '../components/AdminEditModal'
 import Button from '../components/Button'
 import Card from '../components/Card'
@@ -49,7 +49,20 @@ export default function Manage(){
     }catch(e){ console.error(e) }
   }
 
-  function openEdit(type, entity=null){ setEditType(type); setEditEntity(entity || {}); setEditOpen(true) }
+  function openEdit(typeOrEntity, maybeEntity=null){
+    // support calls as openEdit(type, entity) and openEdit(entity) from cards
+    if(typeof typeOrEntity === 'object' && typeOrEntity !== null){
+      const entity = typeOrEntity
+      const inferredType = (entity.hasOwnProperty('avatar_url') || entity.hasOwnProperty('church_id')) ? 'preacher' : 'church'
+      setEditType(inferredType)
+      setEditEntity(entity || {})
+      setEditOpen(true)
+    } else {
+      setEditType(typeOrEntity)
+      setEditEntity(maybeEntity || {})
+      setEditOpen(true)
+    }
+  }
 
   function requestDelete(id){ setToDeleteId(id); setConfirmOpen(true) }
 
@@ -92,13 +105,7 @@ export default function Manage(){
         </div>
       </div>
 
-      <Card>
-        {active === 'churches' ? (
-          <AdminTable columns={churchCols} rows={churches} onEdit={(r)=>openEdit('church', r)} onDelete={(id)=>requestDelete(id)} />
-        ) : (
-          <AdminTable columns={preacherCols} rows={preachers} onEdit={(r)=>openEdit('preacher', r)} onDelete={(id)=>requestDelete(id)} />
-        )}
-      </Card>
+      {/* Tables removed: cards-only admin UI below */}
 
       <AdminEditModal
         open={editOpen}
@@ -117,7 +124,7 @@ export default function Manage(){
       />
 
       {active === 'churches' ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
           {churches.map(c => {
             const preachersFor = preachers.filter(p=>p.church_id === c.id)
             const sess = sessions.filter(s => s.church_id === c.id)
@@ -125,7 +132,7 @@ export default function Manage(){
           })}
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
           {preachers.map(p => {
             const sess = sessions.filter(s => s.preacher_id === p.id)
             return <PreacherCard key={p.id} preacher={p} churchName={churchMap[p.church_id]?.name} sessions={sess} onEdit={openEdit} onDelete={requestDelete} />
