@@ -32,22 +32,25 @@ export default function ChurchCard({ church, preachers = [], sessions = [], onEd
           <div className="w-16 h-16 rounded-lg flex items-center justify-center bg-gradient-to-br from-primary/80 to-primary/40 text-white text-lg font-semibold">{(church.name||'').split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase()}</div>
         </div>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center justify-between">
-            <div>
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div className="min-w-0">
               <div className="text-lg font-semibold truncate">{church.name}</div>
-              <div className="text-sm text-muted">{numPreachers} preachers • {totalSessions} sessions</div>
+              <div className="text-sm text-muted flex flex-wrap gap-x-2 gap-y-1">
+                <span className="tabular-nums">{numPreachers} preachers</span>
+                <span>•</span>
+                <span className="tabular-nums">{totalSessions} sessions</span>
+              </div>
             </div>
-            <div className="text-sm text-muted">{hours}h {mins}m</div>
+            <div className="text-sm text-muted tabular-nums whitespace-nowrap">{hours}h {mins}m</div>
           </div>
 
-          <div className="mt-3 flex items-center gap-2">
-            <div className="avatar-stack max-w-[9rem] overflow-hidden pr-2">
-              {shown.map(p => <Avatar key={p.id} src={p.avatar_url} name={p.name} id={p.id} size={40} className="-ml-3" />)}
-            </div>
-            <div className="ml-auto flex gap-2 flex-shrink-0">
-              <Button variant="secondary" size="sm" onClick={(e)=>{ e.stopPropagation(); onEdit('church', church) }}>Edit</Button>
-              <Button variant="danger" size="sm" onClick={(e)=>{ e.stopPropagation(); onDelete(church.id) }}>Delete</Button>
-            </div>
+          <div className="mt-4 flex items-center gap-2 flex-wrap">
+            {shown.map(p => <Avatar key={p.id} src={p.avatar_url} name={p.name} id={p.id} size={40} />)}
+          </div>
+
+          <div className="mt-4 grid grid-cols-2 gap-2">
+            <Button variant="secondary" size="sm" onClick={(e)=>{ e.stopPropagation(); onEdit('church', church) }}>Edit</Button>
+            <Button variant="danger" size="sm" onClick={(e)=>{ e.stopPropagation(); onDelete(church.id) }}>Delete</Button>
           </div>
         </div>
       </div>

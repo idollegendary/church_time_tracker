@@ -146,7 +146,7 @@ export default function Manage(){
       />
 
       {active === 'churches' ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6 mt-4">
           {churches.map(c => {
             const preachersFor = preachers.filter(p=>p.church_id === c.id)
             const sess = sessions.filter(s => s.church_id === c.id)
