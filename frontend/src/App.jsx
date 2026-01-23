@@ -51,10 +51,10 @@ function App() {
   }, [])
 
   return (
-    <div className="px-5 font-sans mx-auto" style={{ maxWidth: 1440 }}>
+    <div className="container-pad font-sans mx-auto" style={{ maxWidth: '1440px' }}>
       <header className="flex justify-between items-center">
         <div className="flex items-center gap-4">
-          <h2 className="m-0 text-2xl font-semibold">Trecker Time</h2>
+          <h2 className="m-0 site-title">Trecker Time</h2>
           <nav className="hidden sm:block">
             <NavLink hash="#/sessions">Sessions</NavLink>
             <NavLink hash="#/all-sessions">All Sessions</NavLink>

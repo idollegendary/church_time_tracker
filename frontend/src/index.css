@@ -9,6 +9,17 @@ body {
   @apply bg-surface text-neutral-900 font-sans;
 }
 
+/* Fluid base font size for better mobile scaling */
+:root{
+  font-size:16px;
+}
+@media (max-width:640px){
+  :root{ font-size:15px; }
+}
+@media (max-width:420px){
+  :root{ font-size:14px; }
+}
+
 /* Component helpers (lean) — prefer Tailwind utilities in markup */
 .card{
   @apply bg-white rounded-xl shadow-card p-4 transition-shadow transition-colors border border-transparent;
@@ -27,7 +38,7 @@ body {
 .btn-outline{ @apply btn bg-transparent border border-gray-200 text-neutral-900 px-3 py-1 hover:bg-surface }
 
 /* Page header */
-.page-header{ @apply text-2xl font-semibold tracking-tight }
+.page-header{ @apply text-2xl sm:text-3xl font-semibold tracking-tight }
 .page-sub{ @apply text-sm text-gray-500 }
 
 /* Small stat badge */
@@ -74,15 +85,29 @@ input, select, textarea { @apply border border-transparent transition-colors }
 .card-title{ @apply text-lg font-semibold mb-2 }
 
 /* Dashboard specific */
-.card-grid{ @apply grid grid-cols-1 md:grid-cols-3 gap-4 mt-4 }
-.stat-number{ @apply text-2xl font-semibold }
+.card-grid{ @apply grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4 }
+.stat-number{ @apply text-xl sm:text-2xl font-semibold }
 .card-compact{ @apply p-3 }
 .card-muted{ @apply text-sm text-gray-500 }
 
-.controls-row{ @apply flex items-center gap-3 }
+.controls-row{ @apply flex items-center gap-2 flex-wrap }
 
 .btn-primary{
-  @apply bg-primary text-white px-4 py-2 rounded-md transition-colors duration-150 hover:bg-primary/90;
+  @apply bg-primary text-white px-3 py-2 sm:px-4 sm:py-2 rounded-md transition-colors duration-150 hover:bg-primary/90 text-sm sm:text-base;
+}
+
+.btn-outline{ @apply btn bg-transparent border border-gray-200 text-neutral-900 px-3 py-1 sm:px-3 sm:py-1 text-sm }
+
+/* Make cards and containers have comfortable horizontal padding on small screens */
+.container-pad{ @apply px-2 sm:px-5 }
+
+/* Improve readability of lists on small screens */
+.list-compact li{ @apply py-2 border-b border-surface/50 }
+
+/* Reduce large margins on small screens */
+@media(max-width:640px){
+  .mt-5{ margin-top:1rem !important }
+  .mb-4{ margin-bottom:1rem !important }
 }
 
 .muted{
