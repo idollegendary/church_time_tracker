@@ -48,12 +48,17 @@ export default function AllSessions(){
       if(filters.church_id) params.church_id = filters.church_id
       if(filters.preacher_id) params.preacher_id = filters.preacher_id
       if(filters.from) params.date_from = filters.from
-      if(filters.to) params.date_to = filters.to
+      if(filters.to) {
+        // make end date inclusive: add 1 day before sending to backend
+        const toDate = new Date(filters.to)
+        toDate.setDate(toDate.getDate() + 1)
+        params.date_to = toDate.toISOString().split('T')[0]
+      }
       const res = await axios.get('/api/sessions', { params })
       let items = res.data || []
-      // server should filter by date, but keep client-side fallback
+      // client-side fallback (same inclusive logic)
       if(filters.from){ const fromT = new Date(filters.from).getTime(); items = items.filter(s=> new Date(s.start_at || s.created_at).getTime() >= fromT) }
-      if(filters.to){ const toT = new Date(filters.to).getTime(); items = items.filter(s=> new Date(s.start_at || s.created_at).getTime() <= toT) }
+      if(filters.to){ const toDate = new Date(filters.to); toDate.setDate(toDate.getDate() + 1); const toT = toDate.getTime(); items = items.filter(s=> new Date(s.start_at || s.created_at).getTime() < toT) }
       // sorting
       items.sort((a,b)=>{
         let av = (sortBy === 'duration_sec') ? (a.duration_sec||0) : new Date(a.start_at||a.created_at).getTime()
@@ -61,6 +66,7 @@ export default function AllSessions(){
         return sortOrder === 'asc' ? av - bv : bv - av
       })
       setSessions(items)
+      setPage(1)
     }catch(e){console.error(e)}
   }
 
@@ -108,16 +114,16 @@ export default function AllSessions(){
           <input type="date" className="border rounded px-2 py-1" value={filters.to} onChange={e=> setFilters(f=> ({...f, to: e.target.value}))} />
         </label>
 
-        <label className="flex items-center gap-2">Sort:
-          <select className="border rounded px-2 py-1" value={sortBy} onChange={e=> setSortBy(e.target.value)}>
-            <option value="start_at">Start time</option>
+        <label className="flex items-center gap-2">Sort by:
+          <select className="border rounded px-2 py-1" value={sortBy} onChange={e=> { setSortBy(e.target.value); }}>
+            <option value="start_at">Date</option>
             <option value="duration_sec">Duration</option>
           </select>
         </label>
         <label className="flex items-center gap-2">Order:
           <select className="border rounded px-2 py-1" value={sortOrder} onChange={e=> setSortOrder(e.target.value)}>
-            <option value="desc">Desc</option>
-            <option value="asc">Asc</option>
+            <option value="desc">Newest/Longest</option>
+            <option value="asc">Oldest/Shortest</option>
           </select>
         </label>
 
