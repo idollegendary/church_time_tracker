@@ -1,0 +1,36 @@
+name: Redeploy Backend (migrate + vercel deploy)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  migrate-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install backend deps
+        working-directory: backend-express
+        run: npm ci
+
+      - name: Run migrations
+        working-directory: backend-express
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          echo "Running migrations against DATABASE_URL"
+          node src/db/migrate.js
+
+      - name: Deploy backend to Vercel
+        working-directory: backend-express
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          echo "Deploying backend to Vercel (production)"
+          npx vercel --prod --confirm --token "$VERCEL_TOKEN"

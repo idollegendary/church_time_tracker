@@ -78,3 +78,17 @@ Configure environment variables in the Vercel dashboard (`DATABASE_URL`, `JWT_SE
 
 Notes:
 - The `vercel.json` routes all requests to `api/index.js`, which calls the Express app. Adjust memory/timeouts in the Vercel project settings if needed.
+
+Automated deploy + migrations (GitHub Actions)
+--------------------------------------------
+
+A workflow is included at `.github/workflows/redeploy-backend.yml` to run database migrations and deploy the `backend-express` project to Vercel. It is intended to be triggered manually from the GitHub Actions UI (`workflow_dispatch`).
+
+Required GitHub repository secrets:
+- `DATABASE_URL` - the production Postgres connection string (used for migrations).
+- `VERCEL_TOKEN` - a Vercel personal token with deploy permission.
+
+How it works:
+- The workflow checks out the repo, installs backend dependencies, runs `node src/db/migrate.js` with `DATABASE_URL` set from secrets, then runs `npx vercel --prod` using `VERCEL_TOKEN` to push a production deployment.
+
+Important: Backup your production database before running the migrations. The workflow runs migrations non-interactively; ensure you have safe backups and the correct `DATABASE_URL` value in GitHub Secrets.
