@@ -3,6 +3,7 @@ import axios from '../services/api'
 import { formatDuration, toDateInput, toTimeInput, formatDateTime } from '../utils/format'
 import Button from '../components/Button'
 import Card from '../components/Card'
+import Skeleton from '../components/Skeleton'
 
 export default function Timer(){
   const [sessionId,setSessionId] = useState(null)
@@ -11,6 +12,7 @@ export default function Timer(){
   const [elapsed, setElapsed] = useState(0)
   const [churches, setChurches] = useState([])
   const [preachers, setPreachers] = useState([])
+  const [loadingMeta, setLoadingMeta] = useState(true)
   const [sel, setSel] = useState({church_id:'', preacher_id:''})
   const [churchMap, setChurchMap] = useState({})
   const [preacherMap, setPreacherMap] = useState({})
@@ -29,6 +31,7 @@ export default function Timer(){
       const map = {}
       c.data.forEach(x=> map[x.id]=x)
       setChurchMap(map)
+      setLoadingMeta(false)
     }catch(e){console.error(e)}
   }
 
@@ -40,6 +43,7 @@ export default function Timer(){
       const map = {}
       p.data.forEach(x=> map[x.id]=x)
       setPreacherMap(map)
+      setLoadingMeta(false)
     }catch(e){console.error(e)}
   }
 
@@ -168,10 +172,14 @@ export default function Timer(){
         <Card>
           <div className="flex gap-3 items-center mb-2 flex-wrap">
           <label className="flex items-center gap-2">Church:
-            <select className="border rounded px-2 py-1" value={sel.church_id} onChange={onChurchChange}><option value="">—</option>{churches.map(c=> <option key={c.id} value={c.id}>{c.name}</option>)}</select>
+            {loadingMeta ? <div className="w-40"><Skeleton height="h-8" /></div> : (
+              <select className="border rounded px-2 py-1" value={sel.church_id} onChange={onChurchChange}><option value="">—</option>{churches.map(c=> <option key={c.id} value={c.id}>{c.name}</option>)}</select>
+            )}
           </label>
           <label className="flex items-center gap-2">Preacher:
-            <select className="border rounded px-2 py-1" value={sel.preacher_id} onChange={onPreacherChange}><option value="">—</option>{preachers.map(p=> <option key={p.id} value={p.id}>{p.name}</option>)}</select>
+            {loadingMeta ? <div className="w-40"><Skeleton height="h-8" /></div> : (
+              <select className="border rounded px-2 py-1" value={sel.preacher_id} onChange={onPreacherChange}><option value="">—</option>{preachers.map(p=> <option key={p.id} value={p.id}>{p.name}</option>)}</select>
+            )}
           </label>
         </div>
         <div className="flex gap-2 items-center">

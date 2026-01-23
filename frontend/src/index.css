@@ -143,3 +143,23 @@ input, select, textarea { @apply border border-transparent transition-colors }
 /* dark adjustments for stat-card and chips */
 .dark .stat-card{ @apply bg-neutral-800 text-gray-100 border-neutral-700 }
 .dark .chip-primary{ @apply bg-primary/20 }
+
+/* Skeleton shimmer for loading placeholders */
+.skeleton{
+  background: linear-gradient(90deg,#f3f4f6 25%,#e5e7eb 37%,#f3f4f6 63%);
+  background-size: 400% 100%;
+  animation: shimmer 1.2s linear infinite;
+  border-radius: 0.375rem; /* rounded-md */
+}
+
+@keyframes shimmer{
+  0%{ background-position:200% 0 }
+  100%{ background-position:-200% 0 }
+}
+
+/* Code block with copy button */
+.code-block{ position:relative; }
+.code-block pre{ background-color: #f8fafc; padding: 1rem; border-radius: 0.5rem; overflow:auto; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', 'Courier New', monospace; }
+.dark .code-block pre{ background-color: #0b1220; color: #e6eef8 }
+.code-block .copy-btn{ position:absolute; top:0.5rem; right:0.5rem; }
+

@@ -6,9 +6,10 @@ import ConfirmModal from '../components/ConfirmModal'
 import Card from '../components/Card'
 import Avatar from '../components/Avatar'
 import Button from '../components/Button'
+import Skeleton from '../components/Skeleton'
 
 export default function Sessions(){
-  const [sessions,setSessions] = useState([])
+  const [sessions,setSessions] = useState(null) // null = loading
   const [churches,setChurches] = useState([])
   const [preachers,setPreachers] = useState([])
   const [filters, setFilters] = useState({church_id: '', preacher_id: ''})
@@ -58,12 +59,13 @@ export default function Sessions(){
 
   async function fetchSessions(){
     try{
+      setSessions(null)
       const params = {}
       if(filters.church_id) params.church_id = filters.church_id
       if(filters.preacher_id) params.preacher_id = filters.preacher_id
       const res = await axios.get('/api/sessions', { params })
       setSessions(res.data)
-    }catch(e){console.error(e)}
+    }catch(e){console.error(e); setSessions([])}
   }
 
   function onChurchChange(e){
@@ -104,64 +106,93 @@ export default function Sessions(){
       <Card className="overflow-x-auto">
         {/* Desktop: nicer card-grid layout */}
         <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-4 mt-3">
-          {sessions.map(s => (
-            <div key={s.id} className="card p-4 card-hover">
-              <div className="flex items-start gap-3">
-                <Avatar src={preacherMap[s.preacher_id]?.avatar_url} name={preacherMap[s.preacher_id]?.name} id={s.preacher_id} size={48} />
-                <div className="flex-1">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="font-medium text-sm">{preacherMap[s.preacher_id]?.name || '—'}</div>
-                      <div className="text-xs text-muted">{churchMap[s.church_id]?.name || '—'}</div>
-                    </div>
-                    <div className="text-sm font-semibold text-primary">{formatDuration(s.duration_sec)}</div>
-                  </div>
-
-                  <div className="mt-2 text-sm text-muted">
-                    <div>{s.start_at ? formatDateTime(s.start_at) : '-'}</div>
-                    <div className="mt-1 text-xs text-muted">{s.end_at ? formatDateTime(s.end_at) : '-'}</div>
-                  </div>
-
-                  {s.notes ? <div className="mt-3 text-sm text-muted line-clamp-3">{s.notes}</div> : null}
-
-                  <div className="mt-3 flex items-center gap-2">
-                    <Button variant="secondary" size="sm" onClick={()=>{ setEditingId(s.id); setEditingSession(s) }}>Edit</Button>
-                    <Button variant="danger" size="sm" onClick={()=>{ setToDeleteId(s.id); setConfirmOpen(true) }}>Delete</Button>
+          {sessions === null ? (
+            Array.from({length:6}).map((_,i) => (
+              <div key={i} className="card p-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-12 h-12 rounded-full skeleton" />
+                  <div className="flex-1">
+                    <div className="w-32 h-4 skeleton mb-2" />
+                    <div className="w-20 h-3 skeleton mb-3" />
+                    <div className="w-full h-12 skeleton" />
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))
+          ) : (
+            sessions.map(s => (
+              <div key={s.id} className="card p-4 card-hover">
+                <div className="flex items-start gap-3">
+                  <Avatar src={preacherMap[s.preacher_id]?.avatar_url} name={preacherMap[s.preacher_id]?.name} id={s.preacher_id} size={48} />
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="font-medium text-sm">{preacherMap[s.preacher_id]?.name || '—'}</div>
+                        <div className="text-xs text-muted">{churchMap[s.church_id]?.name || '—'}</div>
+                      </div>
+                      <div className="text-sm font-semibold text-primary">{formatDuration(s.duration_sec)}</div>
+                    </div>
+
+                    <div className="mt-2 text-sm text-muted">
+                      <div>{s.start_at ? formatDateTime(s.start_at) : '-'}</div>
+                      <div className="mt-1 text-xs text-muted">{s.end_at ? formatDateTime(s.end_at) : '-'}</div>
+                    </div>
+
+                    {s.notes ? <div className="mt-3 text-sm text-muted line-clamp-3">{s.notes}</div> : null}
+
+                    <div className="mt-3 flex items-center gap-2">
+                      <Button variant="secondary" size="sm" onClick={()=>{ setEditingId(s.id); setEditingSession(s) }}>Edit</Button>
+                      <Button variant="danger" size="sm" onClick={()=>{ setToDeleteId(s.id); setConfirmOpen(true) }}>Delete</Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
         </div>
 
         {/* Mobile cards */}
         <div className="md:hidden mt-3 space-y-3">
-          {sessions.map(s => (
-            <div key={s.id} className="card p-3 card-hover">
-              <div className="flex items-start gap-3">
-                <Avatar src={preacherMap[s.preacher_id]?.avatar_url} name={preacherMap[s.preacher_id]?.name} id={s.preacher_id} size={48} />
-                <div className="flex-1">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="font-medium">{preacherMap[s.preacher_id]?.name || '—'}</div>
-                      <div className="text-xs text-gray-500">{churchMap[s.church_id]?.name || '—'}</div>
-                    </div>
-                    <div className="text-sm font-medium">{formatDuration(s.duration_sec)}</div>
-                  </div>
-
-                  <div className="mt-2 text-sm text-gray-600">
-                    <div>{s.start_at ? formatDateTime(s.start_at) : '-' } — {s.end_at ? formatDateTime(s.end_at) : '-'}</div>
-                    {s.notes ? <div className="mt-2 text-sm text-gray-700">{s.notes}</div> : null}
-                  </div>
-
-                  <div className="mt-3 flex gap-2">
-                    <Button variant="secondary" size="sm" onClick={()=>{ setEditingId(s.id); setEditingSession(s) }}>Edit</Button>
-                    <Button variant="danger" size="sm" onClick={()=>{ setToDeleteId(s.id); setConfirmOpen(true) }}>Delete</Button>
+          {sessions === null ? (
+            Array.from({length:4}).map((_,i) => (
+              <div key={i} className="card p-3">
+                <div className="flex items-start gap-3">
+                  <div className="w-12 h-12 rounded-full skeleton" />
+                  <div className="flex-1">
+                    <div className="w-32 h-4 skeleton mb-2" />
+                    <div className="w-full h-12 skeleton" />
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))
+          ) : (
+            sessions.map(s => (
+              <div key={s.id} className="card p-3 card-hover">
+                <div className="flex items-start gap-3">
+                  <Avatar src={preacherMap[s.preacher_id]?.avatar_url} name={preacherMap[s.preacher_id]?.name} id={s.preacher_id} size={48} />
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="font-medium">{preacherMap[s.preacher_id]?.name || '—'}</div>
+                        <div className="text-xs text-gray-500">{churchMap[s.church_id]?.name || '—'}</div>
+                      </div>
+                      <div className="text-sm font-medium">{formatDuration(s.duration_sec)}</div>
+                    </div>
+
+                    <div className="mt-2 text-sm text-gray-600">
+                      <div>{s.start_at ? formatDateTime(s.start_at) : '-' } — {s.end_at ? formatDateTime(s.end_at) : '-'}</div>
+                      {s.notes ? <div className="mt-2 text-sm text-gray-700">{s.notes}</div> : null}
+                    </div>
+
+                    <div className="mt-3 flex gap-2">
+                      <Button variant="secondary" size="sm" onClick={()=>{ setEditingId(s.id); setEditingSession(s) }}>Edit</Button>
+                      <Button variant="danger" size="sm" onClick={()=>{ setToDeleteId(s.id); setConfirmOpen(true) }}>Delete</Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </Card>
       <ConfirmModal open={confirmOpen} title="Delete session" description="This will permanently delete the session. Are you sure?" onCancel={()=>{ setConfirmOpen(false); setToDeleteId(null) }} onConfirm={async ()=>{ await handleDeleteSession(toDeleteId) }} />
