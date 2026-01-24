@@ -163,19 +163,19 @@ export default function LeaderBoard(){
   function getBadge(preacherId){
     const badgeList = []
       if(computedBadges.topByTotal.includes(preacherId)){
-      const rank = computedBadges.topByTotal.indexOf(preacherId) + 1
-      if(rank === 1) badgeList.push({ label: '⭐ Longest', color: 'text-warning' })
-      else if(rank === 2) badgeList.push({ label: '🥈 2nd longest', color: 'muted' })
-      else badgeList.push({ label: '🥉 3rd longest', color: 'text-warning' })
-    }
-    if(computedBadges.topByCount.includes(preacherId)){
-      const rank = computedBadges.topByCount.indexOf(preacherId) + 1
-      if(rank === 1) badgeList.push({ label: '🔥 Most active', color: 'text-error' })
-    }
-    if(computedBadges.topByAvg.includes(preacherId)){
-      const rank = computedBadges.topByAvg.indexOf(preacherId) + 1
-      if(rank === 1) badgeList.push({ label: '💎 Top average', color: 'text-accent' })
-    }
+        const rank = computedBadges.topByTotal.indexOf(preacherId) + 1
+        if(rank === 1) badgeList.push({ label: '⭐ Longest', color: 'text-neutral-900 dark:text-text-dark' })
+        else if(rank === 2) badgeList.push({ label: '🥈 2nd longest', color: 'text-neutral-900 dark:text-text-dark' })
+        else badgeList.push({ label: '🥉 3rd longest', color: 'text-neutral-900 dark:text-text-dark' })
+      }
+      if(computedBadges.topByCount.includes(preacherId)){
+        const rank = computedBadges.topByCount.indexOf(preacherId) + 1
+        if(rank === 1) badgeList.push({ label: '🔥 Most active', color: 'text-neutral-900 dark:text-text-dark' })
+      }
+      if(computedBadges.topByAvg.includes(preacherId)){
+        const rank = computedBadges.topByAvg.indexOf(preacherId) + 1
+        if(rank === 1) badgeList.push({ label: '💎 Top average', color: 'text-neutral-900 dark:text-text-dark' })
+      }
     return badgeList
   }
 
@@ -191,12 +191,14 @@ export default function LeaderBoard(){
           <input
             type="text"
             placeholder="Search by name..."
+            aria-label="Search by name"
             className="form-control flex-1 min-w-[200px]"
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
           />
           <select
             className="form-control w-auto"
+            aria-label="Filter by church"
             value={churchFilter}
             onChange={e => setChurchFilter(e.target.value)}
           >
@@ -205,6 +207,7 @@ export default function LeaderBoard(){
           </select>
           <select
             className="form-control w-auto"
+            aria-label="Sort by"
             value={sortType}
             onChange={e => setSortType(e.target.value)}
           >
@@ -241,7 +244,7 @@ export default function LeaderBoard(){
               >
                 <div className="flex items-start gap-4">
                   <div className="flex-shrink-0 text-center">
-                    <div className="text-2xl font-bold text-primary">{idx + 1}</div>
+                    <div className="text-2xl font-bold text-neutral-900 dark:text-text-dark">{idx + 1}</div>
                     <Avatar src={item.preacher.avatar_url} name={item.preacher.name} id={item.preacher.id} size={56} />
                   </div>
 
