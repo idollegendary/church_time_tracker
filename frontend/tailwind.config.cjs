@@ -9,8 +9,8 @@ module.exports = {
       colors: {
         // semantic palette tokens
         primary: {
-          DEFAULT: '#1F4ED8',
-          600: '#1E40AF',
+          DEFAULT: '#0B3A8A',
+          600: '#06316A',
           400: '#7C83FF'
         },
         accent: {
