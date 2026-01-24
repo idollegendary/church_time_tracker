@@ -58,7 +58,7 @@ export default function PreacherCard({ preacher, churchName = '-', sessions = []
                     return (
                       <div key={b.id} className={`badge-pill ${b.color}`}>
                         <span className="badge-emoji">{b.emoji}</span> {b.label}
-                        <button className="ml-2 text-xs muted focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary/40 rounded p-1" onClick={(e)=>{ e.stopPropagation(); onUnassign(preacher.id, b.id) }}>×</button>
+                        <button aria-label="Unassign reward" className="ml-2 text-xs muted focus-ring focus:ring-offset-2 rounded p-1" onClick={(e)=>{ e.stopPropagation(); onUnassign(preacher.id, b.id) }}>×</button>
                       </div>
                     )
                   })}

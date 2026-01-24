@@ -15,7 +15,7 @@ export default function AdminEditModal({ open=false, title='Edit', initial={}, f
       <div className="relative z-10 w-full max-w-xl card rounded-lg overflow-hidden">
         <div className="p-4 border-b border-border flex items-center justify-between">
           <h3 className="text-lg font-semibold">{title}</h3>
-          <button onClick={onClose} className="p-1 rounded hover:bg-surface">✕</button>
+          <button aria-label="Close" onClick={onClose} className="p-1 rounded hover:bg-surface focus-ring focus:ring-offset-2">✕</button>
         </div>
         <div className="p-4 space-y-3">
           {fields.map(f=> (

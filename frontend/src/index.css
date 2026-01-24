@@ -127,7 +127,7 @@ input, select, textarea { @apply form-control }
 }
 
 .muted{
-  @apply text-neutral-500;
+  @apply text-muted;
 }
 .card-muted{ @apply text-sm text-neutral-500 }
 

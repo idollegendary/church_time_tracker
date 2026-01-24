@@ -265,9 +265,9 @@ export default function LeaderBoard(){
                                 if(!b) return null
                                 return (
                                   <div key={b.id} className={`badge-pill badge-pop ${b.color}`}>
-                                    <span className="badge-emoji">{b.emoji}</span> {b.label}
-                                    <button className="ml-2 text-xs muted focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary/40 rounded p-1" onClick={(e)=>{ e.stopPropagation(); removeAssignedBadge(item.preacher.id, b.id) }}>×</button>
-                                  </div>
+                                      <span className="badge-emoji">{b.emoji}</span> {b.label}
+                                      <button aria-label="Unassign reward" className="ml-2 text-xs muted focus-ring focus:ring-offset-2 rounded p-1" onClick={(e)=>{ e.stopPropagation(); removeAssignedBadge(item.preacher.id, b.id) }}>×</button>
+                                    </div>
                                 )
                               })}
                             </div>

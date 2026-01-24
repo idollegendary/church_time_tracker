@@ -23,7 +23,7 @@ export default function ChurchPreachersModal({ open = false, church = null, prea
             <h3 className="text-lg font-semibold">{church.name}</h3>
             <div className="text-sm muted">Preachers</div>
           </div>
-          <button onClick={onClose} className="p-1 rounded hover:bg-surface">✕</button>
+          <button aria-label="Close" onClick={onClose} className="p-1 rounded hover:bg-surface focus-ring focus:ring-offset-2">✕</button>
         </div>
         <div className="p-4 space-y-3">
           {rows.length === 0 ? (
