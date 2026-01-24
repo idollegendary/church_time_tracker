@@ -123,6 +123,8 @@ app.use('/api/preachers', preachersRoutes);
 app.use('/api/churches', churchesRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/badges', badgesRoutes);
+// Compatibility: expose the same badges routes under /api/rewards
+app.use('/api/rewards', badgesRoutes);
 
 app.use((err, req, res, next) => {
   try {

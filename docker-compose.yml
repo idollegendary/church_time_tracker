@@ -1,16 +1,5 @@
 version: '3.8'
 services:
-  db:
-    image: postgres:15
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: trecker_time
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
-
   backend-express:
     build: ./backend-express
     command: npm start
@@ -20,16 +9,14 @@ services:
       - ./backend-express:/app
     env_file:
       - backend-express/.env
-    environment:
-      - DATABASE_URL=postgresql://postgres:postgres@db:5432/trecker_time
-    depends_on:
-      - db
+    # DATABASE_URL will be loaded from backend-express/.env (avoid ${} substitution)
 
   frontend:
     build: ./frontend
     ports:
       - "5173:5173"
     environment:
+      # Frontend runs in browser; use host localhost so browser can reach backend container via mapped port
       - VITE_API_BASE=http://localhost:8000
     depends_on:
       - backend-express
@@ -38,5 +25,3 @@ services:
       - /app/node_modules
     command: npm run dev -- --host 0.0.0.0
 
-volumes:
-  pgdata:

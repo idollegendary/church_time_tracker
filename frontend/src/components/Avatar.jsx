@@ -18,11 +18,11 @@ export default function Avatar({ src, name, id, size = 40, className = '', onCli
   const sizeClass = size === 32 ? 'w-8 h-8' : size === 40 ? 'w-10 h-10' : `w-[${size}px] h-[${size}px]`
 
   if (src) return (
-    <img src={src} alt={name || 'avatar'} style={sizeStyle} className={`${className} ${sizeClass} rounded-full object-cover ring-2 ring-white shadow-sm flex-shrink-0 aspect-square`} onClick={onClick} />
+    <img src={src} alt={name || 'avatar'} style={sizeStyle} className={`${className} ${sizeClass} rounded-full object-cover ring-2 ring-border dark:ring-border-dark shadow-sm flex-shrink-0 aspect-square`} onClick={onClick} />
   )
 
   return (
-    <div onClick={onClick} style={sizeStyle} className={`${className} ${sizeClass} rounded-full overflow-hidden flex items-center justify-center font-medium flex-shrink-0 aspect-square ring-2 ring-white shadow-sm`}>
+    <div onClick={onClick} style={sizeStyle} className={`${className} ${sizeClass} rounded-full overflow-hidden flex items-center justify-center font-medium flex-shrink-0 aspect-square ring-2 ring-border dark:ring-border-dark shadow-sm`}>
       <div className={`w-full h-full flex items-center justify-center`} style={{ backgroundColor: color }}>
         <span className="text-white" style={{ fontSize: Math.max(10, Math.floor(size / 3)) }}>{initials}</span>
       </div>

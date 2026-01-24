@@ -4,7 +4,7 @@ import { formatDuration } from '../utils/format'
 import Button from '../components/Button'
 import Card from '../components/Card'
 import Avatar from '../components/Avatar'
-import BadgeModal from '../components/BadgeModal'
+import RewardModal from '../components/RewardModal'
 
 export default function LeaderBoard(){
   const [preachers, setPreachers] = useState([])
@@ -61,11 +61,40 @@ export default function LeaderBoard(){
   }
 
   async function removeAssignedBadge(preacherId, badgeId){
+    // Prefer POST /unassign (works on local backend). If not supported, fall back to DELETE variants.
     try{
-      await axios.delete(`/api/badges/assign?preacher_id=${encodeURIComponent(preacherId)}&badge_id=${encodeURIComponent(badgeId)}`)
+      await axios.post('/api/badges/unassign', { preacher_id: preacherId, badge_id: badgeId })
+    }catch(err){
+      // If server doesn't support POST /unassign (404/405), try DELETE variants
+      if(err && err.response && (err.response.status === 404 || err.response.status === 405)){
+        try{
+          await axios.delete('/api/badges/assign', { data: { preacher_id: preacherId, badge_id: badgeId } })
+        }catch(inner){
+          if(inner && inner.response && inner.response.status === 404){
+            try{
+              await axios.delete(`/api/badges/assign?preacher_id=${encodeURIComponent(preacherId)}&badge_id=${encodeURIComponent(badgeId)}`)
+            }catch(last){
+              console.warn('Unassign failed on all methods', last)
+              alert('Unassign failed')
+              return
+            }
+          } else {
+            console.warn('Unassign failed', inner)
+            alert('Unassign failed')
+            return
+          }
+        }
+      } else {
+        console.warn('Unassign failed', err)
+        alert('Unassign failed')
+        return
+      }
+    }
+
+    try{
       const aRes = await axios.get('/api/badges/assignments')
       setAssignments(aRes.data || {})
-    }catch(e){ console.error(e); alert('Unassign failed') }
+    }catch(e){ console.warn(e) }
   }
 
   // Compute stats for each preacher
@@ -133,19 +162,19 @@ export default function LeaderBoard(){
 
   function getBadge(preacherId){
     const badgeList = []
-    if(computedBadges.topByTotal.includes(preacherId)){
+      if(computedBadges.topByTotal.includes(preacherId)){
       const rank = computedBadges.topByTotal.indexOf(preacherId) + 1
-      if(rank === 1) badgeList.push({ label: '⭐ Longest', color: 'text-yellow-600' })
-      else if(rank === 2) badgeList.push({ label: '🥈 2nd longest', color: 'text-gray-500' })
-      else badgeList.push({ label: '🥉 3rd longest', color: 'text-orange-600' })
+      if(rank === 1) badgeList.push({ label: '⭐ Longest', color: 'text-warning' })
+      else if(rank === 2) badgeList.push({ label: '🥈 2nd longest', color: 'muted' })
+      else badgeList.push({ label: '🥉 3rd longest', color: 'text-warning' })
     }
     if(computedBadges.topByCount.includes(preacherId)){
       const rank = computedBadges.topByCount.indexOf(preacherId) + 1
-      if(rank === 1) badgeList.push({ label: '🔥 Most active', color: 'text-red-600' })
+      if(rank === 1) badgeList.push({ label: '🔥 Most active', color: 'text-error' })
     }
     if(computedBadges.topByAvg.includes(preacherId)){
       const rank = computedBadges.topByAvg.indexOf(preacherId) + 1
-      if(rank === 1) badgeList.push({ label: '💎 Top average', color: 'text-blue-600' })
+      if(rank === 1) badgeList.push({ label: '💎 Top average', color: 'text-accent' })
     }
     return badgeList
   }
@@ -154,7 +183,7 @@ export default function LeaderBoard(){
     <div className="space-y-4">
       <div>
         <h3 className="text-xl font-semibold">LeaderBoard</h3>
-        <div className="text-sm text-muted">Preachers ranking by metrics</div>
+        <div className="text-sm muted">Preachers ranking by metrics</div>
       </div>
 
       <Card className="space-y-3">
@@ -162,12 +191,12 @@ export default function LeaderBoard(){
           <input
             type="text"
             placeholder="Search by name..."
-            className="border rounded px-3 py-2 flex-1 min-w-[200px]"
+            className="form-control flex-1 min-w-[200px]"
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
           />
           <select
-            className="border rounded px-2 py-2"
+            className="form-control w-auto"
             value={churchFilter}
             onChange={e => setChurchFilter(e.target.value)}
           >
@@ -175,7 +204,7 @@ export default function LeaderBoard(){
             {churches.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
           </select>
           <select
-            className="border rounded px-2 py-2"
+            className="form-control w-auto"
             value={sortType}
             onChange={e => setSortType(e.target.value)}
           >
@@ -190,15 +219,15 @@ export default function LeaderBoard(){
         </div>
         <div className="pt-2 border-t flex items-center">
           <div className="flex items-center gap-2">
-            {isAdmin() && <Button size="sm" variant="secondary" onClick={(e)=>{ e.stopPropagation(); setShowBadgeModal(true) }}>Manage Badges</Button>}
+            {isAdmin() && <Button size="sm" variant="secondary" onClick={(e)=>{ e.stopPropagation(); setShowBadgeModal(true) }}>Manage Rewards</Button>}
           </div>
         </div>
       </Card>
 
       <div className="space-y-3">
-        {filtered.length === 0 ? (
-          <Card className="p-4 text-center text-muted">
-            <div className="text-sm text-muted">No preachers found</div>
+          {filtered.length === 0 ? (
+          <Card className="p-4 text-center muted">
+            <div className="text-sm muted">No preachers found</div>
           </Card>
         ) : (
           filtered.map((item, idx) => {
@@ -220,7 +249,7 @@ export default function LeaderBoard(){
                     <div className="flex items-center gap-2 flex-wrap">
                       <div>
                         <h4 className="text-lg font-semibold">{item.preacher.name}</h4>
-                        <div className="text-sm text-muted">{item.churchName}</div>
+                        <div className="text-sm muted">{item.churchName}</div>
                       </div>
                     </div>
 
@@ -237,7 +266,7 @@ export default function LeaderBoard(){
                                 return (
                                   <div key={b.id} className={`badge-pill badge-pop ${b.color}`}>
                                     <span className="badge-emoji">{b.emoji}</span> {b.label}
-                                    <button className="ml-2 text-xs text-muted" onClick={(e)=>{ e.stopPropagation(); removeAssignedBadge(item.preacher.id, b.id) }}>×</button>
+                                    <button className="ml-2 text-xs muted focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary/40 rounded p-1" onClick={(e)=>{ e.stopPropagation(); removeAssignedBadge(item.preacher.id, b.id) }}>×</button>
                                   </div>
                                 )
                               })}
@@ -245,19 +274,19 @@ export default function LeaderBoard(){
 
                     <div className="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-2 text-sm">
                       <div>
-                        <div className="text-muted text-xs">Total time</div>
+                        <div className="muted text-xs">Total time</div>
                         <div className="font-semibold tabular-nums">{formatDuration(item.totalSeconds)}</div>
                       </div>
                       <div>
-                        <div className="text-muted text-xs">Avg time</div>
+                        <div className="muted text-xs">Avg time</div>
                         <div className="font-semibold tabular-nums">{formatDuration(item.avgSeconds)}</div>
                       </div>
                       <div>
-                        <div className="text-muted text-xs">Session count</div>
+                        <div className="muted text-xs">Session count</div>
                         <div className="font-semibold tabular-nums">{item.sessionCount}</div>
                       </div>
                       <div>
-                        <div className="text-muted text-xs">Engagement</div>
+                        <div className="muted text-xs">Engagement</div>
                         <div className="font-semibold tabular-nums">{item.effectiveness}</div>
                       </div>
                     </div>
@@ -265,7 +294,7 @@ export default function LeaderBoard(){
                       <div className="mt-4 pt-4 border-t space-y-2">
                         <div className="text-sm">
                           <div className="font-medium">Detailed statistics:</div>
-                          <ul className="text-muted text-xs mt-2 space-y-1">
+                          <ul className="muted text-xs mt-2 space-y-1">
                             <li>• Total sessions: <span className="font-medium">{item.sessionCount}</span></li>
                             <li>• Total time: <span className="font-medium">{formatDuration(item.totalSeconds)}</span></li>
                             <li>• Average session: <span className="font-medium">{formatDuration(item.avgSeconds)}</span></li>
@@ -280,26 +309,26 @@ export default function LeaderBoard(){
                             <div className="space-y-2">
                               {!assignTarget && (
                                 <div className="flex items-center gap-2">
-                                  <Button size="sm" variant="primary" onClick={(e)=>{ e.stopPropagation(); setAssignTarget(item.preacher.id); setAssignChoice('') }}>Assign badge</Button>
+                                  <Button size="sm" variant="primary" onClick={(e)=>{ e.stopPropagation(); setAssignTarget(item.preacher.id); setAssignChoice('') }}>Assign Reward</Button>
                                 </div>
                               )}
 
                               {assignTarget === item.preacher.id && (
                                 <div className="flex items-center gap-2">
-                                  <select className="border rounded px-2 py-1" value={assignChoice} onChange={e=>setAssignChoice(e.target.value)}>
-                                    <option value="">Select badge...</option>
+                                  <select className="form-control w-auto" value={assignChoice} onChange={e=>setAssignChoice(e.target.value)}>
+                                    <option value="">Choose reward...</option>
                                     {(badges||[]).map(b=> <option key={b.id} value={b.id}>{b.emoji} {b.label}</option>)}
                                   </select>
-                                  <Button size="sm" variant="primary" onClick={async (e)=>{ e.stopPropagation(); if(!assignChoice) return alert('Select a badge'); try{ await axios.post('/api/badges/assign', { preacher_id: item.preacher.id, badge_id: assignChoice }); const aRes = await axios.get('/api/badges/assignments'); setAssignments(aRes.data || {}); setAssignTarget(null); setAssignChoice(''); }catch(err){ console.error(err); alert('Assign failed') } }}>Assign</Button>
+                                  <Button size="sm" variant="primary" onClick={async (e)=>{ e.stopPropagation(); if(!assignChoice) return alert('Select a reward'); try{ await axios.post('/api/badges/assign', { preacher_id: item.preacher.id, badge_id: assignChoice }); const aRes = await axios.get('/api/badges/assignments'); setAssignments(aRes.data || {}); setAssignTarget(null); setAssignChoice(''); }catch(err){ console.error(err); alert('Assign failed') } }}>Assign</Button>
                                   <Button size="sm" variant="secondary" onClick={(e)=>{ e.stopPropagation(); setAssignTarget(null); setAssignChoice('') }}>Cancel</Button>
                                 </div>
                               )}
 
-                              <div className="text-sm font-medium">Assigned badges</div>
-                              <div className="text-xs text-muted">Click × to remove an assigned badge.</div>
+                              <div className="text-sm font-medium">Assigned rewards</div>
+                              <div className="text-xs muted">Click × to remove an assigned reward.</div>
                             </div>
                           ) : (
-                            <div className="text-sm font-medium">Badges are managed in Admin</div>
+                            <div className="text-sm font-medium">Rewards are managed in Admin</div>
                           )}
                         </div>
                       </div>
@@ -311,7 +340,7 @@ export default function LeaderBoard(){
           })
         )}
       </div>
-        <BadgeModal open={showBadgeModal} badges={badges} onClose={()=>{ setShowBadgeModal(false); fetchData() }} onChange={(list)=>setBadges(list)} onDelete={(id)=>{ setBadges(prev => prev.filter(b=>b.id!==id)); fetchData() }} />
+        <RewardModal open={showBadgeModal} badges={badges} onClose={()=>{ setShowBadgeModal(false); fetchData() }} onChange={(list)=>setBadges(list)} onDelete={(id)=>{ setBadges(prev => prev.filter(b=>b.id!==id)); fetchData() }} />
     </div>
   )
 }

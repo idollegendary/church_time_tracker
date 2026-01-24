@@ -29,7 +29,7 @@ export default function PreachersDonut({ items = [], preachers = [] }){
   return (
     <div className="w-full">
       {data.length===0 ? (
-        <div className="text-xs text-gray-500">No data</div>
+        <div className="text-xs muted">No data</div>
       ) : (
         <>
           <div className="w-full h-64">
@@ -59,7 +59,7 @@ export default function PreachersDonut({ items = [], preachers = [] }){
                   <span className="inline-block w-3 h-3 rounded-sm" style={{background: colors[idx % colors.length]}} />
                   <div className="text-sm truncate">
                     <div className="font-medium" title={d.name}>{d.name}</div>
-                    <div className="text-xs text-muted">{formatDuration(d.value)} • {d.sessions} sessions</div>
+                    <div className="text-xs muted">{formatDuration(d.value)} • {d.sessions} sessions</div>
                   </div>
                 </li>
               ))}

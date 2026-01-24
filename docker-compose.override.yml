@@ -1,0 +1,10 @@
+services:
+  # Use production DATABASE_URL from .env for backend-express and don't start local db
+  backend-express:
+    environment:
+      - DATABASE_URL=postgres://postgres.gtlpjlujwrswgilbqofe:7kePfBYTJAylHnXt@aws-1-us-east-1.pooler.supabase.com:5432/postgres?sslmode=require
+      - JWT_SECRET=a39eb12efcba60e05c825b95ca8fb160713befa4e06e720010d9be31d41a77a7
+    depends_on: []
+  frontend:
+    environment:
+      - VITE_API_BASE=http://localhost:8000

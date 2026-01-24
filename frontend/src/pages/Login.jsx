@@ -29,12 +29,12 @@ export default function Login(){
       <h3 className="text-xl font-semibold mb-4">Login</h3>
       <form onSubmit={handleLogin} className="space-y-3">
         <div>
-          <label className="block text-sm text-muted">Login</label>
-          <input className="w-full border rounded px-2 py-1" value={login} onChange={e=>setLogin(e.target.value)} />
+          <label className="block text-sm muted">Login</label>
+          <input className="w-full form-control" value={login} onChange={e=>setLogin(e.target.value)} />
         </div>
         <div>
-          <label className="block text-sm text-muted">Password</label>
-          <input type="password" className="w-full border rounded px-2 py-1" value={password} onChange={e=>setPassword(e.target.value)} />
+          <label className="block text-sm muted">Password</label>
+          <input type="password" className="w-full form-control" value={password} onChange={e=>setPassword(e.target.value)} />
         </div>
         {error && <div className="text-sm text-red-600">{error}</div>}
         <div className="flex justify-end">

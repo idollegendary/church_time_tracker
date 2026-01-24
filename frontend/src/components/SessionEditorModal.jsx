@@ -109,51 +109,51 @@ export default function SessionEditorModal({ session, open, onClose, onSave, pre
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="absolute inset-0 bg-black/40 transition-opacity" onClick={onClose} />
+      <div className="absolute inset-0 bg-black/60 transition-opacity" onClick={onClose} />
       <div ref={wrapperRef} role="dialog" aria-modal="true" aria-labelledby="session-editor-title" tabIndex={-1} className="relative card w-full max-w-lg p-6 transform transition-all duration-150 ease-out scale-100">
-        <Button aria-label="Close" className="absolute right-3 top-3 text-gray-500 hover:text-gray-700" variant="ghost" size="sm" onClick={onClose}>✕</Button>
+        <Button aria-label="Close" className="absolute right-3 top-3 muted hover:text-text-light dark:hover:text-text-dark" variant="ghost" size="sm" onClick={onClose}>✕</Button>
         <h3 id="session-editor-title" className="text-lg font-semibold mb-3">Edit Session</h3>
         <div className="grid grid-cols-2 gap-2">
           <div>
-            <label className="block text-sm text-gray-600">Church</label>
-            <select className="mt-1 w-full border rounded px-2 py-1" value={churchId} onChange={e=>{ setChurchId(e.target.value); }}>
+              <label className="block text-sm muted">Church</label>
+            <select className="mt-1 w-full form-control" value={churchId} onChange={e=>{ setChurchId(e.target.value); }}>
               <option value="">-- none --</option>
               {churches.map(c=> <option key={c.id} value={c.id}>{c.name}</option>)}
             </select>
           </div>
           <div>
-            <label className="block text-sm text-gray-600">Preacher</label>
-            <select className="mt-1 w-full border rounded px-2 py-1" value={preacherId} onChange={e=>setPreacherId(e.target.value)}>
+              <label className="block text-sm muted">Preacher</label>
+            <select className="mt-1 w-full form-control" value={preacherId} onChange={e=>setPreacherId(e.target.value)}>
               <option value="">-- none --</option>
               {preachers.map(p=> <option key={p.id} value={p.id}>{p.name}</option>)}
             </select>
           </div>
           <div>
-            <label className="block text-sm text-gray-600">Start date</label>
-            <input ref={firstRef} type="date" className="mt-1 w-full border rounded px-2 py-1" value={startDate} onChange={e=>setStartDate(e.target.value)} />
+            <label className="block text-sm muted">Start date</label>
+            <input ref={firstRef} type="date" className="mt-1 w-full form-control" value={startDate} onChange={e=>setStartDate(e.target.value)} />
           </div>
           <div>
-            <label className="block text-sm text-gray-600">Start time</label>
-            <input type="time" step="1" className="mt-1 w-full border rounded px-2 py-1" value={startTime} onChange={e=>setStartTime(e.target.value)} />
+            <label className="block text-sm muted">Start time</label>
+            <input type="time" step="1" className="mt-1 w-full form-control" value={startTime} onChange={e=>setStartTime(e.target.value)} />
           </div>
           <div>
-            <label className="block text-sm text-gray-600">End date</label>
-            <input type="date" className="mt-1 w-full border rounded px-2 py-1" value={endDate} onChange={e=>setEndDate(e.target.value)} />
+            <label className="block text-sm muted">End date</label>
+            <input type="date" className="mt-1 w-full form-control" value={endDate} onChange={e=>setEndDate(e.target.value)} />
           </div>
           <div>
-            <label className="block text-sm text-gray-600">End time</label>
-            <input type="time" step="1" className="mt-1 w-full border rounded px-2 py-1" value={endTime} onChange={e=>setEndTime(e.target.value)} />
+            <label className="block text-sm muted">End time</label>
+            <input type="time" step="1" className="mt-1 w-full form-control" value={endTime} onChange={e=>setEndTime(e.target.value)} />
           </div>
         </div>
 
         <div className="mt-3">
-          <label className="block text-sm text-gray-600">Notes</label>
-          <textarea className="w-full mt-1 border rounded px-2 py-1" rows="3" value={notes} onChange={e=>setNotes(e.target.value)} />
+          <label className="block text-sm muted">Notes</label>
+          <textarea className="w-full mt-1 form-control" rows="3" value={notes} onChange={e=>setNotes(e.target.value)} />
         </div>
 
         <div className="mt-3">
-          <label className="block text-sm text-gray-600">Service type</label>
-          <select className="mt-1 w-full border rounded px-2 py-1" value={serviceType} onChange={e=>setServiceType(e.target.value)}>
+          <label className="block text-sm muted">Service type</label>
+          <select className="mt-1 w-full form-control" value={serviceType} onChange={e=>setServiceType(e.target.value)}>
             <option value="service">Service</option>
             <option value="meeting">Meeting</option>
             <option value="other">Other</option>
@@ -165,7 +165,7 @@ export default function SessionEditorModal({ session, open, onClose, onSave, pre
           <Button variant="success" size="sm" onClick={handleSave}>Save</Button>
         </div>
 
-        <div className="mt-3 text-sm text-gray-500">
+        <div className="mt-3 text-sm muted">
           <div>Current start: {session?.start_at ? formatDateTime(session.start_at) : '—'}</div>
           <div>Current end: {session?.end_at ? formatDateTime(session.end_at) : '—'}</div>
         </div>

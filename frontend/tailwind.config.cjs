@@ -7,12 +7,40 @@ module.exports = {
     },
     extend: {
       colors: {
-        primary: '#6366F1',
-        accent: '#06B6D4',
+        // semantic palette tokens
+        primary: {
+          DEFAULT: '#4F46E5',
+          600: '#4338CA',
+          400: '#7C83FF'
+        },
+        accent: {
+          DEFAULT: '#06B6D4',
+          500: '#06B6D4',
+          300: '#67E8F9'
+        },
         success: '#10B981',
         warning: '#F97316',
-        surface: '#F8FAFC',
-        'neutral-900': '#0F172A'
+        error: '#EF4444',
+        surface: {
+          DEFAULT: '#F8FAFC',
+          dark: '#0B1220'
+        },
+        text: {
+          light: '#0F172A',
+          dark: '#E6EEF8'
+        },
+        border: {
+          DEFAULT: '#E6EEF8',
+          dark: '#1F2937'
+        },
+        muted: {
+          DEFAULT: '#6B7280',
+          dark: '#9CA3AF'
+        },
+        neutral: {
+          900: '#0F172A',
+          700: '#334155'
+        }
       },
       boxShadow: {
         card: '0 8px 30px rgba(2,6,23,0.08)',

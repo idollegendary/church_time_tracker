@@ -4,9 +4,9 @@ const VARIANT_STYLES = {
   // prefer theme tokens defined in tailwind.config and helpers in index.css
   primary: 'btn-primary',
   secondary: 'btn-outline',
-  danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-2 focus:ring-red-300',
-  success: 'bg-success text-white hover:bg-success/90 focus:ring-2 focus:ring-success/30',
-  ghost: 'bg-transparent text-neutral-900 hover:bg-surface/100',
+  danger: 'btn-danger',
+  success: 'btn-success',
+  ghost: 'btn-ghost',
 }
 
 const SIZE_STYLES = {

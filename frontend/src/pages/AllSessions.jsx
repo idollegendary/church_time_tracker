@@ -101,28 +101,28 @@ export default function AllSessions(){
 
       <div className="card flex gap-3 items-center flex-wrap">
         <label className="flex items-center gap-2">Church:
-          <select className="border rounded px-2 py-1" value={filters.church_id} onChange={e=> { const v = e.target.value; setFilters(f=> ({...f, church_id: v, preacher_id: ''})); fetchPreachers(v); }}>
+          <select className="form-control" value={filters.church_id} onChange={e=> { const v = e.target.value; setFilters(f=> ({...f, church_id: v, preacher_id: ''})); fetchPreachers(v); }}>
             <option value="">— all —</option>
             {churches.map(c=> <option key={c.id} value={c.id}>{c.name}</option>)}
           </select>
         </label>
 
         <label className="flex items-center gap-2">Preacher:
-          <select className="border rounded px-2 py-1" value={filters.preacher_id} onChange={e=> setFilters(f=> ({...f, preacher_id: e.target.value}))}>
+          <select className="form-control" value={filters.preacher_id} onChange={e=> setFilters(f=> ({...f, preacher_id: e.target.value}))}>
             <option value="">— all —</option>
             {preachers.map(p=> <option key={p.id} value={p.id}>{p.name}</option>)}
           </select>
         </label>
 
         <label className="flex items-center gap-2">From:
-          <input type="date" className="border rounded px-2 py-1" value={filters.from} onChange={e=> setFilters(f=> ({...f, from: e.target.value}))} />
+          <input type="date" className="form-control" value={filters.from} onChange={e=> setFilters(f=> ({...f, from: e.target.value}))} />
         </label>
         <label className="flex items-center gap-2">To:
-          <input type="date" className="border rounded px-2 py-1" value={filters.to} onChange={e=> setFilters(f=> ({...f, to: e.target.value}))} />
+          <input type="date" className="form-control" value={filters.to} onChange={e=> setFilters(f=> ({...f, to: e.target.value}))} />
         </label>
 
         <label className="flex items-center gap-2">Sort:
-          <select className="border rounded px-2 py-1" value={sortType} onChange={e=> { setSortType(e.target.value); setPage(1); }}>
+          <select className="form-control" value={sortType} onChange={e=> { setSortType(e.target.value); setPage(1); }}>
             <option value="newest">Newest</option>
             <option value="oldest">Oldest</option>
             <option value="longest">Longest</option>
@@ -131,7 +131,7 @@ export default function AllSessions(){
         </label>
 
         <label className="flex items-center gap-2">Page size:
-          <select className="border rounded px-2 py-1" value={pageSize} onChange={e=> { setPageSize(parseInt(e.target.value,10)); setPage(1) }}>
+          <select className="form-control" value={pageSize} onChange={e=> { setPageSize(parseInt(e.target.value,10)); setPage(1) }}>
             <option value={10}>10</option>
             <option value={20}>20</option>
             <option value={50}>50</option>
@@ -146,7 +146,7 @@ export default function AllSessions(){
 
       <Card className="overflow-x-auto">
         <div className="hidden md:block mt-3">
-          <div className="grid grid-cols-12 gap-3 items-center font-medium text-sm text-muted py-2 px-2 border-b">
+            <div className="grid grid-cols-12 gap-3 items-center font-medium text-sm muted py-2 px-2 border-b">
             <div className="col-span-1"></div>
             <div className="col-span-1">#</div>
             <div className="col-span-3">Preacher</div>
@@ -164,10 +164,10 @@ export default function AllSessions(){
               <div className="col-span-3 flex items-center gap-3">
                 <div>
                   <div className="font-medium">{preachers.find(p=>p.id===s.preacher_id)?.name || '—'}</div>
-                  <div className="text-xs text-muted truncate max-w-xs">{s.notes ? s.notes : ''}</div>
+                    <div className="text-xs muted truncate max-w-xs">{s.notes ? s.notes : ''}</div>
                 </div>
               </div>
-              <div className="col-span-3 text-sm">{churches.find(c=>c.id===s.church_id)?.name || '—'}</div>
+                  <div className="col-span-3 text-sm">{churches.find(c=>c.id===s.church_id)?.name || '—'}</div>
               <div className="col-span-2 text-sm">{s.start_at ? formatDateTime(s.start_at) : '-'}</div>
               <div className="col-span-2 text-sm font-semibold">{formatDuration(s.duration_sec)}</div>
             </div>
@@ -183,14 +183,14 @@ export default function AllSessions(){
                     <div className="flex items-center justify-between">
                       <div>
                         <div className="font-medium">{preachers.find(p=>p.id===s.preacher_id)?.name || '—'}</div>
-                        <div className="text-xs text-muted">{churches.find(c=>c.id===s.church_id)?.name || '—'}</div>
+                          <div className="text-xs muted">{churches.find(c=>c.id===s.church_id)?.name || '—'}</div>
                       </div>
                       <div className="text-sm font-medium">{formatDuration(s.duration_sec)}</div>
                     </div>
 
-                    <div className="mt-2 text-sm text-muted">
+                    <div className="mt-2 text-sm muted">
                       <div>{s.start_at ? formatDateTime(s.start_at) : '-' } — {s.end_at ? formatDateTime(s.end_at) : '-'}</div>
-                      {s.notes ? <div className="mt-2 text-sm text-muted truncate">{s.notes}</div> : null}
+                        {s.notes ? <div className="mt-2 text-sm muted truncate">{s.notes}</div> : null}
                     </div>
                   </div>
                 </div>
@@ -200,7 +200,7 @@ export default function AllSessions(){
       </Card>
 
       <div className="flex items-center justify-between">
-        <div className="text-sm text-muted">Page {page} / {totalPages}</div>
+          <div className="text-sm muted">Page {page} / {totalPages}</div>
         <div className="flex gap-2">
           <Button size="sm" variant="secondary" onClick={()=> setPage(p => Math.max(1, p-1))}>Prev</Button>
           <Button size="sm" variant="secondary" onClick={()=> setPage(p => Math.min(totalPages, p+1))}>Next</Button>

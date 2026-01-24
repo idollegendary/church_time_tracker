@@ -22,59 +22,75 @@ body {
 
 /* Component helpers (lean) — prefer Tailwind utilities in markup */
 .card{
-  @apply bg-white rounded-xl shadow-card p-4 transition-shadow transition-colors border border-transparent;
+  @apply bg-surface rounded-xl shadow-card p-4 transition-shadow transition-colors border border-border;
 }
 
 /* Card hover variant */
 .card-hover{ @apply transition-shadow hover:shadow-soft-lg }
 
 /* Table helpers */
-.table-header{ @apply bg-surface text-sm font-medium text-gray-700 }
+.table-header{ @apply bg-surface text-sm font-medium muted }
+/* Table helpers */
+.table-header{ @apply bg-surface text-sm font-medium text-neutral-500 }
 .table-row-hover{ @apply hover:bg-surface/70 }
 
 /* Button base utilities */
 .btn{ @apply inline-flex items-center justify-center rounded-md font-medium shadow-sm transition-colors disabled:opacity-60 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2 }
 .btn-primary{ @apply btn bg-primary text-white px-4 py-2 hover:bg-primary/90 }
-.btn-outline{ @apply btn bg-transparent border border-gray-200 text-neutral-900 px-3 py-1 hover:bg-surface }
+.btn-outline{ @apply btn bg-transparent border border-border text-neutral-900 px-3 py-1 hover:bg-surface }
 
 /* Page header */
 .page-header{ @apply text-2xl sm:text-3xl font-semibold tracking-tight }
-.page-sub{ @apply text-sm text-gray-500 }
+.page-sub{ @apply text-sm muted }
+./* Page header */
+.page-sub{ @apply text-sm text-neutral-500 }
 
 /* Small stat badge */
 .stat-badge{ @apply inline-block bg-primary/10 text-primary text-xs px-2 py-0.5 rounded-full font-medium }
 
 /* Chart shell */
-.chart-shell{ @apply bg-white rounded-md p-3 shadow-sm transition-colors border border-transparent }
+.chart-shell{ @apply bg-surface rounded-md p-3 shadow-sm transition-colors border border-border }
 
 /* Accessible focus-visible helper */
 .focus-ring:focus-visible{ @apply ring-2 ring-primary/40 outline-none }
+.site-header{
+  @apply sticky top-0 z-40 backdrop-blur-sm transition-colors;
+}
+.site-title{ @apply text-lg font-semibold tracking-tight flex items-center gap-3 }
+.site-title .logo-mark{ @apply w-8 h-8 rounded-md flex items-center justify-center text-white font-bold }
 
 /* Dark mode overrides (toggle `dark` on <html> or <body>) */
-.dark body{ @apply bg-neutral-900 text-gray-100 }
+.dark body{ @apply bg-neutral-900 text-text-dark }
 .dark .card{ @apply bg-neutral-800 border-neutral-700 }
-.dark .card-title{ @apply text-gray-100 }
-.dark .card-muted{ @apply text-gray-300 }
+.dark .card-title{ @apply text-text-dark }
+.dark .card-muted{ @apply text-neutral-300 }
 .dark .chart-shell{ @apply bg-neutral-800 border-neutral-700 }
-.dark .table-header{ @apply bg-neutral-900 text-gray-300 }
+.dark .table-header{ @apply bg-neutral-900 text-neutral-300 }
 .dark .table-row-hover:hover{ @apply bg-neutral-800 }
-.dark .btn-outline{ @apply border-gray-700 text-gray-100 }
+.dark .btn-outline{ @apply border-border-dark text-text-dark }
 .dark .btn-primary{ @apply bg-primary text-white }
 
+/* Dark-mode override for `muted` helper */
+.dark .muted { @apply text-neutral-300 }
+
 /* Improve text contrast in dark mode for common containers */
-.dark .card, .dark .chart-shell, .dark main, .dark .card-grid, .dark .card-compact { @apply text-gray-100 }
-.dark .muted, .dark .card-muted, .dark .page-sub { @apply text-gray-300 }
+.dark .card, .dark .chart-shell, .dark main, .dark .card-grid, .dark .card-compact { @apply text-text-dark }
+.dark .muted, .dark .card-muted, .dark .page-sub { @apply text-neutral-300 }
 
 /* Table cells */
-.dark table th, .dark table td { @apply text-gray-100 }
-.dark table thead th { @apply text-gray-300 }
+.dark table th, .dark table td { @apply text-text-dark }
+.dark table thead th { @apply text-neutral-300 }
 
 /* Form controls in dark */
-.dark input, .dark select, .dark textarea { @apply bg-neutral-800 border-neutral-700 text-gray-100 }
-.dark input::placeholder, .dark textarea::placeholder { @apply text-gray-400 }
+.dark input, .dark select, .dark textarea { @apply bg-neutral-800 border-border-dark text-text-dark }
+.dark input::placeholder, .dark textarea::placeholder { @apply text-neutral-400 }
 
-/* Base form controls: keep consistent border width and transitions to avoid layout shift on theme toggle */
-input, select, textarea { @apply border border-transparent transition-colors }
+/* Form control utility: theme-aware inputs/selects/textareas */
+.form-control{ @apply border border-border bg-surface text-text-light placeholder:text-neutral-500 rounded-md transition-colors px-3 py-2 }
+.dark .form-control{ @apply bg-neutral-800 border-border-dark text-text-dark placeholder:text-neutral-400 }
+
+/* Apply form-control to native form elements by default (can be overridden per component) */
+input, select, textarea { @apply form-control }
 
 /* Links and nav */
 .dark a { @apply text-primary }
@@ -88,7 +104,7 @@ input, select, textarea { @apply border border-transparent transition-colors }
 .card-grid{ @apply grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4 }
 .stat-number{ @apply text-xl sm:text-2xl font-semibold }
 .card-compact{ @apply p-3 }
-.card-muted{ @apply text-sm text-gray-500 }
+.card-muted{ @apply text-sm muted }
 
 .controls-row{ @apply flex items-center gap-2 flex-wrap }
 
@@ -96,7 +112,7 @@ input, select, textarea { @apply border border-transparent transition-colors }
   @apply bg-primary text-white px-3 py-2 sm:px-4 sm:py-2 rounded-md transition-colors duration-150 hover:bg-primary/90 text-sm sm:text-base;
 }
 
-.btn-outline{ @apply btn bg-transparent border border-gray-200 text-neutral-900 px-3 py-1 sm:px-3 sm:py-1 text-sm }
+.btn-outline{ @apply btn bg-transparent border border-border text-neutral-900 px-3 py-1 sm:px-3 sm:py-1 text-sm }
 
 /* Make cards and containers have comfortable horizontal padding on small screens */
 .container-pad{ @apply px-2 sm:px-5 }
@@ -111,11 +127,9 @@ input, select, textarea { @apply border border-transparent transition-colors }
 }
 
 .muted{
-  @apply text-gray-500;
+  @apply text-neutral-500;
 }
-
-/* Utility: muted text (used in components) */
-.text-muted{ @apply text-gray-600 }
+.card-muted{ @apply text-sm text-neutral-500 }
 
 /* Small clamp helper for notes preview (fallback without plugin) */
 .line-clamp-3{
@@ -128,8 +142,9 @@ input, select, textarea { @apply border border-transparent transition-colors }
 /* removed circular apply for text-primary */
 
 /* Stat card (compact) */
-.stat-card{ @apply bg-white rounded-lg shadow-card p-4 text-center transition-colors border border-transparent }
-.stat-card .label{ @apply text-sm text-gray-500 }
+.stat-card{ @apply bg-surface rounded-lg shadow-card p-4 text-center transition-colors border border-border }
+.stat-card .label{ @apply text-sm muted }
+.stat-card .label{ @apply text-sm text-neutral-500 }
 .stat-card .value{ @apply text-2xl font-bold mt-2 }
 
 /* small chip */
@@ -141,20 +156,29 @@ input, select, textarea { @apply border border-transparent transition-colors }
 .progress-fill{ @apply h-2 bg-primary rounded-full }
 
 /* dark adjustments for stat-card and chips */
-.dark .stat-card{ @apply bg-neutral-800 text-gray-100 border-neutral-700 }
+.dark .stat-card{ @apply bg-neutral-800 text-text-dark border-neutral-700 }
 .dark .chip-primary{ @apply bg-primary/20 }
 
 /* Card hero variant */
 .card-hero{ @apply rounded-lg overflow-hidden border border-transparent transition-shadow hover:shadow-lg }
-.card-hero .text-muted{ @apply text-gray-500 }
+.card-hero .muted{ @apply text-neutral-500 }
 
 /* Ensure hover bg is theme-aware so dark mode doesn't turn card white */
 .card:hover{ @apply bg-surface }
 .dark .card:hover{ @apply bg-neutral-800 }
 
 /* Badge styles and pop animation */
-.badge-pill{ @apply inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-white/90 text-neutral-900 shadow-sm; transition: transform .18s ease, box-shadow .18s ease; }
-.dark .badge-pill{ @apply bg-neutral-700 text-gray-100 }
+.badge-pill{ @apply inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-surface/90 text-neutral-900 shadow-sm; transition: transform .18s ease, box-shadow .18s ease; }
+.dark .badge-pill{ @apply bg-neutral-700 text-text-dark }
+
+/* Danger / Success / Ghost button variants using semantic tokens */
+.btn-danger{ @apply btn bg-error text-white hover:bg-error/90 }
+.btn-success{ @apply btn bg-success text-white hover:bg-success/90 }
+.btn-ghost{ @apply btn bg-transparent text-neutral-900 hover:bg-surface }
+
+.dark .btn-ghost{ @apply text-text-dark }
+/* Prevent bright/light hover in dark mode for outline/ghost variants */
+.dark .btn-outline:hover, .dark .btn-ghost:hover { @apply bg-transparent }
 .badge-emoji{ font-size:14px }
 .badge-pop{ transform-origin: center; animation: badgePop 420ms cubic-bezier(.2,.9,.2,1); }
 .badge-pill:hover{ transform: translateY(-3px) scale(1.02); box-shadow: 0 6px 18px rgba(15,23,42,0.08); }

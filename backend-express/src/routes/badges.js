@@ -62,4 +62,15 @@ router.delete('/assign', requireAuth, asyncHandler(async (req, res) => {
   res.json(map);
 }));
 
+// Unassign via POST with JSON body — convenience endpoint (some clients/hosts may not support DELETE reliably)
+router.post('/unassign', requireAuth, asyncHandler(async (req, res) => {
+  const payload = req.body || {};
+  const preacher_id = payload.preacher_id;
+  const badge_id = payload.badge_id;
+  if(!preacher_id || !badge_id) return res.status(400).json({ error: 'preacher_id and badge_id required' });
+  await unassignBadge(preacher_id, badge_id);
+  const map = await listAssignments();
+  res.json(map);
+}));
+
 module.exports = router;

@@ -8,7 +8,7 @@ export default function AdminLayout({ title = 'Admin', children, sidebar }){
           <div className="sticky top-6">
             <div className="mb-4">
               <h2 className="text-xl font-semibold">{title}</h2>
-              <p className="text-sm text-muted mt-1">Manage application data and configuration</p>
+              <p className="text-sm muted mt-1">Manage application data and configuration</p>
             </div>
             <nav className="flex flex-col gap-2">{sidebar}</nav>
           </div>

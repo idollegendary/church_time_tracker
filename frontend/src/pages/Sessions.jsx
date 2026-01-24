@@ -84,13 +84,13 @@ export default function Sessions(){
       <h3 className="text-xl font-semibold">Sessions</h3>
       <div className="card flex gap-3 items-center flex-wrap">
         <label className="flex items-center gap-2">Church:
-          <select className="border rounded px-2 py-1" value={filters.church_id} onChange={onChurchChange}>
+          <select className="form-control" value={filters.church_id} onChange={onChurchChange}>
             <option value="">— all —</option>
             {churches.map(c=> <option key={c.id} value={c.id}>{c.name}</option>)}
           </select>
         </label>
         <label className="flex items-center gap-2">Preacher:
-          <select className="border rounded px-2 py-1" value={filters.preacher_id} onChange={onPreacherChange}>
+          <select className="form-control" value={filters.preacher_id} onChange={onPreacherChange}>
             <option value="">— all —</option>
             {preachers.map(p=> <option key={p.id} value={p.id}>{p.name}</option>)}
           </select>
@@ -128,17 +128,17 @@ export default function Sessions(){
                     <div className="flex items-center justify-between gap-3">
                       <div className="min-w-0">
                         <div className="font-medium text-sm truncate">{preacherMap[s.preacher_id]?.name || '—'}</div>
-                        <div className="text-xs text-muted truncate">{churchMap[s.church_id]?.name || '—'}</div>
+                        <div className="text-xs muted truncate">{churchMap[s.church_id]?.name || '—'}</div>
                       </div>
                       <div className="text-sm font-semibold text-primary flex-shrink-0 text-right max-w-[8rem] truncate">{formatDuration(s.duration_sec)}</div>
                     </div>
 
-                    <div className="mt-2 text-sm text-muted">
+                    <div className="mt-2 text-sm muted">
                       <div>{s.start_at ? formatDateTime(s.start_at) : '-'}</div>
-                      <div className="mt-1 text-xs text-muted">{s.end_at ? formatDateTime(s.end_at) : '-'}</div>
+                      <div className="mt-1 text-xs muted">{s.end_at ? formatDateTime(s.end_at) : '-'}</div>
                     </div>
 
-                    {s.notes ? <div className="mt-3 text-sm text-muted line-clamp-3 break-words">{s.notes}</div> : null}
+                    {s.notes ? <div className="mt-3 text-sm muted line-clamp-3 break-words">{s.notes}</div> : null}
 
                     <div className="mt-3 flex items-center gap-2">
                       <Button variant="secondary" size="sm" onClick={()=>{ setEditingId(s.id); setEditingSession(s) }}>Edit</Button>
@@ -174,14 +174,14 @@ export default function Sessions(){
                     <div className="flex items-center justify-between gap-3">
                       <div className="min-w-0">
                         <div className="font-medium truncate">{preacherMap[s.preacher_id]?.name || '—'}</div>
-                        <div className="text-xs text-gray-500 truncate">{churchMap[s.church_id]?.name || '—'}</div>
+                        <div className="text-xs muted truncate">{churchMap[s.church_id]?.name || '—'}</div>
                       </div>
                       <div className="text-sm font-medium flex-shrink-0 max-w-[6rem] text-right truncate">{formatDuration(s.duration_sec)}</div>
                     </div>
 
-                    <div className="mt-2 text-sm text-gray-600">
+                    <div className="mt-2 text-sm muted">
                       <div>{s.start_at ? formatDateTime(s.start_at) : '-' } — {s.end_at ? formatDateTime(s.end_at) : '-'}</div>
-                      {s.notes ? <div className="mt-2 text-sm text-gray-700 line-clamp-3 break-words">{s.notes}</div> : null}
+                      {s.notes ? <div className="mt-2 text-sm muted line-clamp-3 break-words">{s.notes}</div> : null}
                     </div>
 
                     <div className="mt-3 flex gap-2">

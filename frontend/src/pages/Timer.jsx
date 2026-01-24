@@ -177,25 +177,25 @@ export default function Timer(){
         <h3 className="page-header">Live Timer</h3>
         <div className="page-sub">Start and stop sessions quickly</div>
       </div>
-      <div className="text-2xl">{running ? <span className="text-green-600 font-medium">Running...</span> : <span className="text-gray-700">Stopped</span>}</div>
+      <div className="text-2xl">{running ? <span className="text-success font-medium">Running...</span> : <span className="muted">Stopped</span>}</div>
       <div className="mt-3">
         <Card>
           <div className="flex gap-3 items-center mb-2 flex-wrap">
           <label className="flex items-center gap-2">Church:
             {loadingMeta ? <div className="w-40"><Skeleton height="h-8" /></div> : (
-              <select className="border rounded px-2 py-1" value={sel.church_id} onChange={onChurchChange}><option value="">—</option>{churches.map(c=> <option key={c.id} value={c.id}>{c.name}</option>)}</select>
+              <select className="form-control" value={sel.church_id} onChange={onChurchChange}><option value="">—</option>{churches.map(c=> <option key={c.id} value={c.id}>{c.name}</option>)}</select>
             )}
           </label>
           <label className="flex items-center gap-2">Preacher:
             {loadingMeta ? <div className="w-40"><Skeleton height="h-8" /></div> : (
-              <select className="border rounded px-2 py-1" value={sel.preacher_id} onChange={onPreacherChange}><option value="">—</option>{preachers.map(p=> <option key={p.id} value={p.id}>{p.name}</option>)}</select>
+              <select className="form-control" value={sel.preacher_id} onChange={onPreacherChange}><option value="">—</option>{preachers.map(p=> <option key={p.id} value={p.id}>{p.name}</option>)}</select>
             )}
           </label>
         </div>
         <div className="flex gap-2 items-center">
           <Button variant="primary" onClick={start} disabled={running || !sel.preacher_id}>Start</Button>
           <Button variant="danger" onClick={stop} disabled={!running}>Stop</Button>
-          {running && <div className="ml-4 text-sm text-gray-600">Elapsed: <span className="font-medium">{formatDuration(elapsed)}</span></div>}
+          {running && <div className="ml-4 text-sm muted">Elapsed: <span className="font-medium">{formatDuration(elapsed)}</span></div>}
         </div>
         </Card>
       </div>

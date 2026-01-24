@@ -53,10 +53,10 @@ export default function ConfirmModal({ open, title = 'Are you sure?', descriptio
   if(!open) return null
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="absolute inset-0 bg-black opacity-30" aria-hidden="true" onClick={onCancel}></div>
+      <div className="absolute inset-0 bg-black/60" aria-hidden="true" onClick={onCancel}></div>
       <div ref={modalRef} role="dialog" aria-modal="true" aria-labelledby="confirm-title" aria-describedby={description ? 'confirm-desc' : undefined} tabIndex={-1} className="card z-10 max-w-md w-full p-4">
         <div id="confirm-title" className="font-semibold text-lg mb-2">{title}</div>
-        {description ? <div id="confirm-desc" className="text-sm text-gray-600 mb-4">{description}</div> : null}
+        {description ? <div id="confirm-desc" className="text-sm muted mb-4">{description}</div> : null}
         <div className="flex justify-end gap-2">
           <Button ref={cancelRef} variant="secondary" size="sm" onClick={onCancel}>Cancel</Button>
           <Button variant="danger" size="sm" onClick={onConfirm}>Delete</Button>

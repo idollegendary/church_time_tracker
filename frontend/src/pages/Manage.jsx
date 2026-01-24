@@ -30,6 +30,54 @@ export default function Manage(){
   useEffect(()=>{ fetchChurches(); fetchPreachers(); fetchSessions() }, [])
 
   const [sessions, setSessions] = useState([])
+  const [badges, setBadges] = useState([])
+  const [assignments, setAssignments] = useState({})
+
+  useEffect(()=>{ fetchBadgesAndAssignments() }, [])
+
+  async function fetchBadgesAndAssignments(){
+    try{
+      const [bRes, aRes] = await Promise.all([
+        axios.get('/api/badges'),
+        axios.get('/api/badges/assignments')
+      ])
+      setBadges(bRes.data || [])
+      setAssignments(aRes.data || {})
+    }catch(e){ console.warn('Failed to load badges/assignments', e) }
+  }
+
+  async function assignReward(preacherId, badgeId){
+    try{
+      await axios.post('/api/badges/assign', { preacher_id: preacherId, badge_id: badgeId })
+      await fetchBadgesAndAssignments()
+    }catch(err){ console.error(err); alert('Assign failed'); throw err }
+  }
+
+  async function unassignReward(preacherId, badgeId){
+    try{
+      await axios.post('/api/badges/unassign', { preacher_id: preacherId, badge_id: badgeId })
+      await fetchBadgesAndAssignments()
+    }catch(err){
+      if(err && err.response && (err.response.status === 404 || err.response.status === 405)){
+        try{
+          await axios.delete('/api/badges/assign', { data: { preacher_id: preacherId, badge_id: badgeId } })
+          await fetchBadgesAndAssignments()
+          return
+        }catch(inner){
+          if(inner && inner.response && inner.response.status === 404){
+            try{
+              await axios.delete(`/api/badges/assign?preacher_id=${encodeURIComponent(preacherId)}&badge_id=${encodeURIComponent(badgeId)}`)
+              await fetchBadgesAndAssignments()
+              return
+            }catch(last){ console.warn('Unassign failed on all methods', last); alert('Unassign failed'); throw last }
+          }
+          console.warn('Unassign failed', inner); alert('Unassign failed'); throw inner
+        }
+      } else {
+        console.warn('Unassign failed', err); alert('Unassign failed'); throw err
+      }
+    }
+  }
 
   async function fetchChurches(){
     try{
@@ -119,8 +167,8 @@ export default function Manage(){
 
       {active === 'preachers' ? (
         <div className="mb-4 flex items-center gap-2">
-          <label className="text-sm text-muted">Church filter:</label>
-          <select className="border rounded px-2 py-1" value={preacherChurchFilter} onChange={(e)=>setPreacherChurchFilter(e.target.value)}>
+          <label className="text-sm muted">Church filter:</label>
+          <select className="form-control" value={preacherChurchFilter} onChange={(e)=>setPreacherChurchFilter(e.target.value)}>
             <option value="">All</option>
             {churches.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
           </select>
@@ -157,7 +205,7 @@ export default function Manage(){
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
           {filteredPreachers.map(p => {
             const sess = sessions.filter(s => s.preacher_id === p.id)
-            return <PreacherCard key={p.id} preacher={p} churchName={churchMap[p.church_id]?.name} sessions={sess} onEdit={openEdit} onDelete={requestDelete} />
+            return <PreacherCard key={p.id} preacher={p} churchName={churchMap[p.church_id]?.name} sessions={sess} onEdit={openEdit} onDelete={requestDelete} badges={badges} assignments={assignments} isAdmin={true} onAssign={assignReward} onUnassign={unassignReward} />
           })}
         </div>
       )}

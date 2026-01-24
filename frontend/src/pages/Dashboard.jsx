@@ -156,11 +156,11 @@ export default function Dashboard(){
             <div className="flex-1 flex justify-center items-center">
               <PreachersDonut items={topPreachers} preachers={preachers} />
             </div>
-            <div className="w-full md:w-1/2 md:pl-4 md:border-l md:border-gray-200">
+            <div className="w-full md:w-1/2 md:pl-4 md:border-l md:border-border">
               <div className="flex items-center justify-between mb-2">
-                <div className="text-sm text-muted">Sort by</div>
+                <div className="text-sm muted">Sort by</div>
                 <div>
-                  <select className="border rounded px-2 py-1 text-sm" value={topSort} onChange={e=>setTopSort(e.target.value)}>
+                  <select className="form-control text-sm" value={topSort} onChange={e=>setTopSort(e.target.value)}>
                     <option value="time">Total time</option>
                     <option value="sessions">Sessions count</option>
                   </select>
@@ -182,7 +182,7 @@ export default function Dashboard(){
                           <Avatar src={p?.avatar_url} name={p?.name} id={tp.preacher_id} size={36} />
                           <div>
                             <div className="text-sm font-medium">{p?.name || tp.preacher_id}</div>
-                            <div className="text-xs text-muted">{tp.sessions_count ?? 0} sessions</div>
+                            <div className="text-xs muted">{tp.sessions_count ?? 0} sessions</div>
                           </div>
                         </div>
                         <div className="text-sm font-semibold">{formatDuration(tp.total_sec)}</div>
@@ -201,17 +201,17 @@ export default function Dashboard(){
         <div className="stat-card">
           <div className="label">Total tracked</div>
           <div className="value">{formatDuration(totalSec)}</div>
-          <div className="mt-2 text-sm text-muted">Sessions: {summary?.sessions_count ?? '—'}</div>
+          <div className="mt-2 text-sm muted">Sessions: {summary?.sessions_count ?? '—'}</div>
         </div>
         <div className="stat-card">
           <div className="label">Active Preachers</div>
           <div className="value">{topPreachers.length}</div>
-          <div className="mt-2 text-sm text-muted">Top performer: {preachers.find(p=>p.id===topPreachers[0]?.preacher_id)?.name || '—'}</div>
+          <div className="mt-2 text-sm muted">Top performer: {preachers.find(p=>p.id===topPreachers[0]?.preacher_id)?.name || '—'}</div>
         </div>
         <div className="stat-card">
           <div className="label">Avg / day</div>
           <div className="value">{Math.round((totalSec/86400) || 0)}</div>
-          <div className="mt-2 text-sm text-muted">Range: {dateFrom} → {dateTo}</div>
+          <div className="mt-2 text-sm muted">Range: {dateFrom} → {dateTo}</div>
         </div>
       </div>
 
@@ -222,21 +222,21 @@ export default function Dashboard(){
               <div className="flex flex-wrap items-center gap-3">
                   <div className="w-full sm:w-auto">
                     <label className="text-xs font-medium mb-1 block">Preacher</label>
-                    <select className="border rounded px-2 py-1 w-full sm:w-auto max-w-xs" value={sel} onChange={e=>setSel(e.target.value)}>
+                    <select className="form-control w-full sm:w-auto max-w-xs" value={sel} onChange={e=>setSel(e.target.value)}>
                       <option value="">— all —</option>
                       {preachers.map(p=> <option key={p.id} value={p.id}>{p.name}</option>)}
                     </select>
                   </div>
                   <div className="w-full sm:w-auto">
                     <label className="text-xs font-medium mb-1 block">Church</label>
-                    <select className="border rounded px-2 py-1 w-full sm:w-auto max-w-xs" value={churchFilter} onChange={e=>setChurchFilter(e.target.value)}>
+                    <select className="form-control w-full sm:w-auto max-w-xs" value={churchFilter} onChange={e=>setChurchFilter(e.target.value)}>
                       <option value="">— all —</option>
                       {churches.map(c=> <option key={c.id} value={c.id}>{c.name}</option>)}
                     </select>
                   </div>
                   <label className="flex items-center gap-2 w-full sm:w-auto">
                     <span className="sr-only">Interval</span>
-                    <select className="border rounded px-2 py-1 w-full sm:w-auto max-w-xs" value={interval} onChange={e=>setInterval(e.target.value)}>
+                    <select className="form-control w-full sm:w-auto max-w-xs" value={interval} onChange={e=>setInterval(e.target.value)}>
                       <option value="day">Day</option>
                       <option value="week">Week</option>
                       <option value="month">Month</option>
@@ -262,14 +262,14 @@ export default function Dashboard(){
         <div className="space-y-4">
           <Card title="Recent Sessions">
             <div className="flex items-center justify-between">
-              <div className="text-sm text-muted">Show</div>
+              <div className="text-sm muted">Show</div>
               <div className="flex items-center gap-2">
-                <select className="border rounded px-2 py-1 text-sm" value={recentMode} onChange={e=>setRecentMode(e.target.value)}>
+                <select className="form-control text-sm" value={recentMode} onChange={e=>setRecentMode(e.target.value)}>
                   <option value="recent">Recent</option>
                   <option value="longest">Longest</option>
                   <option value="shortest">Shortest</option>
                 </select>
-                <select className="border rounded px-2 py-1 text-sm" value={recentCount} onChange={e=>setRecentCount(parseInt(e.target.value,10))}>
+                <select className="form-control text-sm" value={recentCount} onChange={e=>setRecentCount(parseInt(e.target.value,10))}>
                   <option value={5}>5</option>
                   <option value={10}>10</option>
                   <option value={20}>20</option>
@@ -289,7 +289,7 @@ export default function Dashboard(){
 
                 items = items.slice(0, recentCount)
 
-                if(items.length===0) return <div className="text-xs text-gray-500">No sessions in range</div>
+                if(items.length===0) return <div className="text-xs muted">No sessions in range</div>
 
                 return items.map(s=> (
                   <div key={(s.id||s.preacher_id)+"-"+(s.start_at||s.created_at)} className="flex items-center justify-between p-2 rounded hover:shadow-md transition-shadow">
@@ -297,7 +297,7 @@ export default function Dashboard(){
                       <Avatar src={preachers.find(p=>p.id===s.preacher_id)?.avatar_url} name={preachers.find(p=>p.id===s.preacher_id)?.name} id={s.preacher_id} size={40} />
                       <div>
                         <div className="text-sm font-medium">{(preachers.find(p=>p.id===s.preacher_id)?.name) || s.preacher_id || '—'}</div>
-                        <div className="text-xs text-muted">{formatDateTime(s.start_at || s.created_at)}</div>
+                        <div className="text-xs muted">{formatDateTime(s.start_at || s.created_at)}</div>
                       </div>
                     </div>
                     <div className="text-sm font-medium">{formatDuration(s.duration_sec)}</div>

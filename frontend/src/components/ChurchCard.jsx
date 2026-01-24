@@ -35,13 +35,13 @@ export default function ChurchCard({ church, preachers = [], sessions = [], onEd
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div className="min-w-0">
               <div className="text-lg font-semibold truncate">{church.name}</div>
-              <div className="text-sm text-muted flex flex-wrap gap-x-2 gap-y-1">
+              <div className="text-sm muted flex flex-wrap gap-x-2 gap-y-1">
                 <span className="tabular-nums">{numPreachers} preachers</span>
                 <span>•</span>
                 <span className="tabular-nums">{totalSessions} sessions</span>
               </div>
             </div>
-            <div className="text-sm text-muted tabular-nums whitespace-nowrap">{hours}h {mins}m</div>
+            <div className="text-sm muted tabular-nums whitespace-nowrap">{hours}h {mins}m</div>
           </div>
 
           <div className="mt-4 flex items-center gap-2 flex-wrap">
