@@ -4,7 +4,7 @@ import Drawer from './Drawer'
 
 function NavLink({ href, children, onClick }){
   return (
-    <a href={href} onClick={onClick} className="mr-4 text-primary hover:underline">
+    <a href={href} onClick={onClick} className="mr-4 text-neutral-900 dark:text-text-dark hover:underline">
       {children}
     </a>
   )
@@ -40,11 +40,11 @@ export default function Header(){
         <div className="flex items-center gap-3">
           <ThemeToggle />
           { !user ? (
-            <a href="/#/login" className="hidden sm:inline-block text-sm text-primary mr-3">Login</a>
+            <a href="/#/login" className="hidden sm:inline-block text-sm text-neutral-900 dark:text-text-dark mr-3">Login</a>
           ) : (
               <div className="hidden sm:flex items-center gap-3">
               <span className="text-sm muted">{user.login}</span>
-              <button onClick={()=>{ localStorage.removeItem('trecker:token'); localStorage.removeItem('trecker:user'); window.location.reload() }} className="text-sm text-primary">Logout</button>
+              <button onClick={()=>{ localStorage.removeItem('trecker:token'); localStorage.removeItem('trecker:user'); window.location.reload() }} className="text-sm text-neutral-900 dark:text-text-dark">Logout</button>
             </div>
           ) }
 
@@ -55,13 +55,13 @@ export default function Header(){
 
         <Drawer open={mobileOpen} onClose={()=>setMobileOpen(false)}>
           <nav className="flex flex-col gap-3 p-2">
-            <a href="/#/sessions" onClick={()=>setMobileOpen(false)} className="text-primary">Sessions</a>
-            <a href="/#/all-sessions" onClick={()=>setMobileOpen(false)} className="text-primary">All Sessions</a>
-            <a href="/#/timer" onClick={()=>setMobileOpen(false)} className="text-primary">Timer</a>
-            <a href="/#/leaderboard" onClick={()=>setMobileOpen(false)} className="text-primary">LeaderBoard</a>
-            <a href="/#/dashboard" onClick={()=>setMobileOpen(false)} className="text-primary">Dashboard</a>
-            <a href="/#/manage" onClick={()=>setMobileOpen(false)} className="text-primary">Manage</a>
-            { !localStorage.getItem('trecker:token') ? <a href="/#/login" onClick={()=>setMobileOpen(false)} className="text-primary">Login</a> : <a href="/#/" onClick={()=>{ localStorage.removeItem('trecker:token'); localStorage.removeItem('trecker:user'); setMobileOpen(false); window.location.reload() }} className="text-primary">Logout</a> }
+            <a href="/#/sessions" onClick={()=>setMobileOpen(false)} className="text-neutral-900 dark:text-text-dark">Sessions</a>
+            <a href="/#/all-sessions" onClick={()=>setMobileOpen(false)} className="text-neutral-900 dark:text-text-dark">All Sessions</a>
+            <a href="/#/timer" onClick={()=>setMobileOpen(false)} className="text-neutral-900 dark:text-text-dark">Timer</a>
+            <a href="/#/leaderboard" onClick={()=>setMobileOpen(false)} className="text-neutral-900 dark:text-text-dark">LeaderBoard</a>
+            <a href="/#/dashboard" onClick={()=>setMobileOpen(false)} className="text-neutral-900 dark:text-text-dark">Dashboard</a>
+            <a href="/#/manage" onClick={()=>setMobileOpen(false)} className="text-neutral-900 dark:text-text-dark">Manage</a>
+            { !localStorage.getItem('trecker:token') ? <a href="/#/login" onClick={()=>setMobileOpen(false)} className="text-neutral-900 dark:text-text-dark">Login</a> : <a href="/#/" onClick={()=>{ localStorage.removeItem('trecker:token'); localStorage.removeItem('trecker:user'); setMobileOpen(false); window.location.reload() }} className="text-neutral-900 dark:text-text-dark">Logout</a> }
           </nav>
         </Drawer>
       </div>

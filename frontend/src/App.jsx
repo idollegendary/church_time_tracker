@@ -13,7 +13,7 @@ import api from './services/api'
 
 function NavLink({ hash, children }) {
   return (
-    <a href={hash} className="mr-4 text-primary hover:underline">
+    <a href={hash} className="mr-4 text-neutral-900 dark:text-text-dark hover:underline">
       {children}
     </a>
   )

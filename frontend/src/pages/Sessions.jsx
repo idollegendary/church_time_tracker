@@ -130,7 +130,7 @@ export default function Sessions(){
                         <div className="font-medium text-sm truncate">{preacherMap[s.preacher_id]?.name || '—'}</div>
                         <div className="text-xs muted truncate">{churchMap[s.church_id]?.name || '—'}</div>
                       </div>
-                      <div className="text-sm font-semibold text-primary flex-shrink-0 text-right max-w-[8rem] truncate">{formatDuration(s.duration_sec)}</div>
+                      <div className="text-sm font-semibold text-neutral-900 dark:text-text-dark flex-shrink-0 text-right max-w-[8rem] truncate">{formatDuration(s.duration_sec)}</div>
                     </div>
 
                     <div className="mt-2 text-sm muted">

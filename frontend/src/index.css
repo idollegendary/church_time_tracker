@@ -46,7 +46,7 @@ body {
 .page-sub{ @apply text-sm text-neutral-500 }
 
 /* Small stat badge */
-.stat-badge{ @apply inline-block bg-primary/10 text-primary text-xs px-2 py-0.5 rounded-full font-medium }
+.stat-badge{ @apply inline-block bg-primary/10 text-muted text-xs px-2 py-0.5 rounded-full font-medium }
 
 /* Chart shell */
 .chart-shell{ @apply bg-surface rounded-md p-3 shadow-sm transition-colors border border-border }
@@ -93,7 +93,7 @@ body {
 input, select, textarea { @apply form-control }
 
 /* Links and nav */
-.dark a { @apply text-primary }
+.dark a { @apply text-text-dark }
 
 
 .card-compact{ @apply p-3 }
