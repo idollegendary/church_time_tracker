@@ -7,7 +7,7 @@ export default function Avatar({ src, name, id, size = 40, className = '', onCli
   })()
 
   const color = (() => {
-    const colors = ['#6366f1','#10b981','#3b82f6','#ec4899','#f59e0b','#8b5cf6']
+    const colors = ['#4338CA','#059669','#1E40AF','#BE185D','#B45309','#6D28D9']
     if(!id) return '#9ca3af'
     let h = 0
     for(let i=0;i<id.length;i++) h = (h<<5)-h + id.charCodeAt(i)
