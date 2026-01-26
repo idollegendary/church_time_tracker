@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  smoke-tests:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: trecker_time
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d trecker_time" 
+          --health-interval 5s 
+          --health-timeout 5s 
+          --health-retries 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install backend deps
+        working-directory: backend-express
+        run: npm install
+
+      - name: Wait for Postgres
+        run: |
+          for i in {1..30}; do
+            pg_isready -h localhost -p 5432 -U postgres -d trecker_time && break || sleep 1
+          done
+
+      - name: Run migrations
+        working-directory: backend-express
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/trecker_time
+        run: npm run migrate
+
+      - name: Run tests (Jest)
+        working-directory: backend-express
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/trecker_time
+        run: npm test
